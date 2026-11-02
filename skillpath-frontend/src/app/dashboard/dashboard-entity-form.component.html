@@ -1,0 +1,155 @@
+<section class="dashboard-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">{{ isEdit() ? 'EDIT RECORD' : 'NEW RECORD' }}</p>
+      <h1>{{ isEdit() ? 'Edit ' + config?.singular : 'Add ' + config?.singular }}</h1>
+      <p class="page-description">
+        {{ isEdit()
+          ? 'Update ontology properties and connect existing individuals.'
+          : 'Create a new ' + (config?.singular ?? 'record') + '.' }}
+      </p>
+    </div>
+    <a class="button-secondary" [routerLink]="cancelLink()">Cancel</a>
+  </header>
+
+  @if (loading()) {
+    <div class="form-card" role="status" aria-label="Loading form data">
+      <div class="table-skeleton"></div>
+      <div class="table-skeleton"></div>
+      <div class="table-skeleton"></div>
+    </div>
+  } @else if (!config || !formReady()) {
+    <div class="state-card error-state" role="alert">
+      <strong>Form unavailable</strong>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  } @else {
+    <form class="form-card" (ngSubmit)="save()">
+      <section class="form-section">
+        <h2>Identity</h2>
+        <div class="form-fields">
+          @if (!isEdit()) {
+            <div class="form-field">
+              <label for="entity-id">Identifier</label>
+              <input
+                id="entity-id"
+                class="form-control"
+                autocomplete="off"
+                [ngModel]="identifier()"
+                (ngModelChange)="setIdentifier($event)"
+                name="identifier"
+                required
+                pattern="[A-Za-z_][A-Za-z0-9_-]*"
+                placeholder="e.g. new-skill">
+            </div>
+          } @else {
+            <div class="form-field">
+              <label>Identifier</label>
+              <input class="form-control" [value]="displayIdentifier(identifier())" disabled>
+            </div>
+          }
+          @for (property of identityProperties(); track property.key) {
+            <div class="form-field">
+              <label [for]="property.key">{{ property.label }}</label>
+              <input
+                class="form-control"
+                [id]="property.key"
+                [ngModel]="propertyValues[property.key]"
+                (ngModelChange)="setProperty(property.key, $event)"
+                [name]="property.key"
+                [required]="property.required ?? false"
+                placeholder="Enter {{ property.label.toLowerCase() }}">
+            </div>
+          }
+        </div>
+      </section>
+
+      @if (classificationProperties().length > 0 || availableClasses().length > 1) {
+        <section class="form-section">
+          <h2>Classification</h2>
+          <div class="form-fields">
+            @if (availableClasses().length > 1) {
+              <div class="form-field">
+                <label for="entity-class">Ontology class</label>
+                <select
+                  id="entity-class"
+                  class="form-control"
+                  [ngModel]="entityClass()"
+                  (ngModelChange)="setClass($event)"
+                  name="entityClass">
+                  @for (className of availableClasses(); track className) {
+                    <option [value]="className">{{ className }}</option>
+                  }
+                </select>
+              </div>
+            }
+            @for (property of classificationProperties(); track property.key) {
+              <div class="form-field">
+                <label [for]="property.key">{{ property.label }}</label>
+                <input
+                  class="form-control"
+                  [id]="property.key"
+                  [type]="property.type ?? 'text'"
+                  [ngModel]="propertyValues[property.key]"
+                  (ngModelChange)="setProperty(property.key, $event)"
+                  [name]="property.key"
+                  placeholder="Enter {{ property.label.toLowerCase() }}">
+              </div>
+            }
+          </div>
+        </section>
+      }
+
+      @if (config.relations.length > 0) {
+        <section class="form-section">
+          <h2>Relations</h2>
+          @for (relation of config.relations; track relation.key) {
+            <div class="form-field relation-group">
+              <label [for]="'relation-' + relation.key">{{ relation.label }}</label>
+              @if (relationOptions[relation.key].length > 0) {
+                @if (relation.single) {
+                  <select
+                    class="form-control"
+                    [id]="'relation-' + relation.key"
+                    [ngModel]="singleSelection(relation.key)"
+                    (ngModelChange)="setSingleRelation(relation.key, $event)"
+                    [name]="'relation-' + relation.key">
+                    <option value="">None</option>
+                    @for (option of relationOptions[relation.key]; track option.id) {
+                      <option [value]="option.id">{{ optionLabel(relationOptions[relation.key], option) }}</option>
+                    }
+                  </select>
+                } @else {
+                  <div class="relation-options">
+                    @for (option of relationOptions[relation.key]; track option.id) {
+                      <label class="relation-option">
+                        <input
+                          type="checkbox"
+                          [checked]="isSelected(relation.key, option.id)"
+                          (change)="onRelationChange(relation.key, option.id, $event)">
+                        <span>{{ optionLabel(relationOptions[relation.key], option) }}</span>
+                      </label>
+                    }
+                  </div>
+                }
+              } @else {
+                <p class="muted-note">No existing {{ relation.target }} individuals are available.</p>
+              }
+            </div>
+          }
+        </section>
+      }
+
+      @if (errorMessage()) {
+        <p class="form-error" role="alert">{{ errorMessage() }}</p>
+      }
+
+      <div class="form-actions">
+        <a class="button-secondary" [routerLink]="cancelLink()">Cancel</a>
+        <button class="button-primary" type="submit" [disabled]="saving() || loading() || !formReady()">
+          {{ saving() ? 'Saving…' : 'Save changes' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

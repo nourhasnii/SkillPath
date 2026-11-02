@@ -1,0 +1,131 @@
+<section class="assistant-page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">SEMANTIC ASSISTANT</p>
+      <h1>Ask the knowledge graph</h1>
+      <p class="page-lede">
+        Ask a question in plain language. The assistant turns it into a structured query and runs
+        it against the SkillPath knowledge base — no external AI service.
+      </p>
+    </div>
+  </header>
+
+  <section class="ask-card" aria-label="Ask a question">
+    <form class="ask-form" (ngSubmit)="submit()">
+      <label class="sr-only" for="nlp-question">Your question</label>
+      <input
+        id="nlp-question"
+        name="nlp-question"
+        type="text"
+        autocomplete="off"
+        placeholder="e.g. Which trainings teach Python?"
+        [ngModel]="question()"
+        (ngModelChange)="updateQuestion($event)" />
+      <button type="submit" class="ask-button" [disabled]="loading() || !question().trim()">
+        @if (loading()) {
+          <span class="spinner" aria-hidden="true"></span>
+          Analysing…
+        } @else {
+          <sp-icon name="sparkle" [size]="16" />
+          Ask
+        }
+      </button>
+    </form>
+
+    @if (examples().length) {
+      <div class="example-chips" aria-label="Example questions">
+        <span class="chips-label">Try an example</span>
+        <div class="chips">
+          @for (example of examples(); track example) {
+            <button
+              type="button"
+              class="example-chip"
+              [disabled]="loading()"
+              (click)="useExample(example)">
+              {{ example }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </section>
+
+  @if (error()) {
+    <p class="form-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (response(); as answer) {
+    <p class="answer-message" role="status">{{ answer.message }}</p>
+
+    <div class="answer-grid">
+      <section class="panel-card" aria-label="Detected intent and entities">
+        <h2>Detected intent &amp; entities</h2>
+        <span class="intent-badge">{{ answer.intent }}</span>
+        @if (answer.entities.length) {
+          <ul class="entity-list">
+            @for (entity of answer.entities; track entity.iri) {
+              <li class="entity-card">
+                <span class="entity-text">{{ entity.text }}</span>
+                <span class="entity-type">{{ entity.type }}</span>
+                <code class="entity-iri">{{ localName(entity.iri) }}</code>
+                <span class="entity-score">{{ (entity.score * 100).toFixed(0) }}%</span>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="muted-copy">No specific record was needed to answer this question.</p>
+        }
+      </section>
+
+      <section class="panel-card" aria-label="Generated query">
+        <div class="panel-head">
+          <h2>Generated query</h2>
+          @if (answer.sparql) {
+            <button type="button" class="copy-button" (click)="copySparql()">
+              <sp-icon [name]="copied() ? 'check' : 'book'" [size]="15" />
+              {{ copied() ? 'Copied' : 'Copy' }}
+            </button>
+          }
+        </div>
+        @if (answer.sparql) {
+          <pre class="sparql-block"><code>{{ answer.sparql }}</code></pre>
+        } @else {
+          <p class="muted-copy">No query was generated for this question.</p>
+        }
+      </section>
+    </div>
+
+    <section class="panel-card results-card" aria-label="Query results">
+      <h2>Results</h2>
+      @if (hasResults()) {
+        <div class="table-scroll">
+          <table class="results-table">
+            <thead>
+              <tr>
+                @for (column of columns(); track column) {
+                  <th scope="col">{{ column }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of answer.results; track $index) {
+                <tr>
+                  @for (column of columns(); track column) {
+                    <td>{{ cellValue(row, column) }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="muted-copy">The query returned no rows.</p>
+      }
+    </section>
+  } @else if (!loading() && !error()) {
+    <section class="panel-card empty-card">
+      <sp-icon name="sparkle" [size]="22" />
+      <p>Ask a question above, or pick an example, to see the generated query and its results.</p>
+    </section>
+  }
+</section>

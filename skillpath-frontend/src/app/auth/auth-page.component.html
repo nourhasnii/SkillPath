@@ -1,0 +1,175 @@
+<main class="auth-page">
+  <section class="auth-aside">
+    <a class="auth-brand" routerLink="/" aria-label="SkillPath home">
+      <span class="auth-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>skillpath<span>.</span></span>
+    </a>
+    <div class="auth-aside-copy">
+      <p class="auth-eyebrow">SEMANTIC SKILL INTELLIGENCE</p>
+      <h2>Your next step,<br><em>made clearer.</em></h2>
+      <p>Connect your experience, skills and career goals through the SkillPath knowledge graph.</p>
+    </div>
+    <p class="auth-aside-footer">OWL · RDF · SPARQL · SkillPath</p>
+  </section>
+
+  <section class="auth-main">
+    <div class="auth-mobile-brand">
+      <a class="auth-brand" routerLink="/">
+        <span class="auth-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>skillpath<span>.</span></span>
+      </a>
+    </div>
+    <div class="auth-card">
+      <p class="auth-eyebrow">
+        @switch (mode()) {
+          @case ('login') { ACCOUNT ACCESS }
+          @case ('register') { GET STARTED }
+          @case ('forgot-password') { ACCOUNT RECOVERY }
+          @case ('reset-password') { ACCOUNT RECOVERY }
+        }
+      </p>
+      <h1>{{ title() }}</h1>
+      <p class="auth-subtitle">{{ subtitle() }}</p>
+
+      @if (mode() === 'reset-password' && !resetToken()) {
+        <div class="auth-alert auth-error" role="alert">This reset link is missing or invalid. Request a new link to continue.</div>
+        <a class="auth-primary-link" routerLink="/forgot-password">Request a reset link</a>
+      } @else {
+        <form class="auth-form" (ngSubmit)="submit()" #authForm="ngForm">
+          @if (mode() === 'register') {
+            <label class="auth-field">
+              <span>Full name</span>
+              <input
+                type="text"
+                name="fullName"
+                autocomplete="name"
+                required
+                minlength="2"
+                maxlength="120"
+                [ngModel]="fullName()"
+                (ngModelChange)="setName($event)"
+                placeholder="Your full name">
+            </label>
+          }
+
+          @if (mode() !== 'reset-password') {
+            <label class="auth-field">
+              <span>Email address</span>
+              <input
+                type="email"
+                name="email"
+                autocomplete="email"
+                required
+                maxlength="254"
+                [ngModel]="email()"
+                (ngModelChange)="setEmail($event)"
+                placeholder="you@example.com">
+            </label>
+          }
+
+          @if (mode() === 'register') {
+            <label class="auth-field">
+              <span>Profile type</span>
+              <select
+                name="profileType"
+                required
+                [ngModel]="profileType()"
+                (ngModelChange)="setRole($event)">
+                <option value="STUDENT">Student</option>
+                <option value="PROFESSIONAL">Professional</option>
+              </select>
+            </label>
+          }
+
+          @if (mode() === 'login' || mode() === 'register' || mode() === 'reset-password') {
+            <label class="auth-field">
+              <span>Password</span>
+              <span class="auth-password-wrap">
+                <input
+                  [type]="showPassword() ? 'text' : 'password'"
+                  [name]="mode() === 'reset-password' ? 'newPassword' : 'password'"
+                  [autocomplete]="mode() === 'login' ? 'current-password' : 'new-password'"
+                  required
+                  [minlength]="mode() === 'login' ? 1 : 12"
+                  maxlength="128"
+                  [ngModel]="password()"
+                  (ngModelChange)="setPassword($event)"
+                  placeholder="••••••••••••">
+                <button type="button" class="password-toggle" (click)="showPassword.set(!showPassword())">
+                  {{ showPassword() ? 'Hide' : 'Show' }}
+                </button>
+              </span>
+              @if (mode() !== 'login') {
+                <small>Use at least 12 characters. Avoid a predictable password.</small>
+              }
+            </label>
+          }
+
+          @if (mode() === 'register' || mode() === 'reset-password') {
+            <label class="auth-field">
+              <span>Confirm password</span>
+              <span class="auth-password-wrap">
+                <input
+                  [type]="showConfirmation() ? 'text' : 'password'"
+                  name="passwordConfirmation"
+                  autocomplete="new-password"
+                  required
+                  minlength="12"
+                  maxlength="128"
+                  [ngModel]="passwordConfirmation()"
+                  (ngModelChange)="setConfirmation($event)"
+                  placeholder="Repeat your password">
+                <button type="button" class="password-toggle" (click)="showConfirmation.set(!showConfirmation())">
+                  {{ showConfirmation() ? 'Hide' : 'Show' }}
+                </button>
+              </span>
+              @if (passwordMismatch()) {
+                <small class="auth-inline-error">Passwords do not match.</small>
+              }
+            </label>
+          }
+
+          @if (mode() === 'login') {
+            <div class="auth-inline-links">
+              <a routerLink="/forgot-password">Forgot password?</a>
+            </div>
+          }
+
+          @if (errorMessage()) {
+            <div class="auth-alert auth-error" role="alert">{{ errorMessage() }}</div>
+          }
+          @if (successMessage()) {
+            <div class="auth-alert auth-success" role="status">{{ successMessage() }}</div>
+          }
+
+          <button
+            class="auth-submit"
+            type="submit"
+            [disabled]="loading() || authForm.invalid || passwordMismatch() || (mode() === 'reset-password' && !resetToken())">
+            @if (loading()) {
+              Processing…
+            } @else {
+              @switch (mode()) {
+                @case ('login') { Sign in }
+                @case ('register') { Create account }
+                @case ('forgot-password') { Send reset link }
+                @case ('reset-password') { Update password }
+              }
+            }
+            <span aria-hidden="true">→</span>
+          </button>
+        </form>
+
+        @if (mode() === 'login') {
+          <p class="auth-switch">New to SkillPath? <a routerLink="/register">Create an account</a></p>
+        } @else if (mode() === 'register') {
+          <p class="auth-switch">Already have an account? <a routerLink="/login">Sign in</a></p>
+        } @else if (mode() === 'forgot-password' || (mode() === 'reset-password' && successMessage())) {
+          <p class="auth-switch"><a routerLink="/login">Back to sign in</a></p>
+        }
+      }
+
+      <a class="auth-home-link" routerLink="/">← Back to SkillPath home</a>
+    </div>
+  </section>
+</main>

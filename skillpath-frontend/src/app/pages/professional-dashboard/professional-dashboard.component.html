@@ -1,0 +1,489 @@
+<section class="professional-dashboard" aria-labelledby="pro-dash-title">
+  <!-- A. Career intelligence header ------------------------------------ -->
+  <header class="sp-hero pro-hero">
+    <div class="sp-hero-identity">
+      <span class="sp-avatar pro-avatar" aria-hidden="true">{{ initials() }}</span>
+      <div class="sp-hero-copy">
+        <div class="sp-hero-eyebrow">
+          <span class="pro-badge"><sp-icon name="briefcase" [size]="12" /> Professional</span>
+          @if (level(); as lvl) {
+            <span [class]="levelBadgeClass()" title="Overall readiness level">
+              <sp-icon name="trend" [size]="12" /> {{ levelText() }}
+            </span>
+          }
+          @if (experience()) {
+            <span class="pro-experience">{{ experience() }}</span>
+          }
+        </div>
+        <h1 id="pro-dash-title">{{ greeting() }}</h1>
+        <p class="sp-hero-sub">Analyze. Strategize. Advance your career.</p>
+        <div class="pro-route">
+          <span class="pro-route-node is-current">
+            <sp-icon name="user" [size]="13" /> {{ currentPosition() }}
+          </span>
+          <sp-icon name="arrowRight" [size]="15" class="pro-route-arrow" />
+          <span class="pro-route-node is-target">
+            <sp-icon name="target" [size]="13" />
+            {{ targetLabel() || 'Select a target role' }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="sp-hero-actions">
+      <a routerLink="/account/profile" class="sp-btn pro-btn-outline">
+        <sp-icon name="user" [size]="16" /> Edit profile
+      </a>
+      <a routerLink="/skill-gap" class="sp-btn pro-btn-solid">
+        <sp-icon name="target" [size]="16" /> Analyze compatibility
+      </a>
+    </div>
+  </header>
+
+  <div class="pro-selector">
+    <sp-career-selector (preselected)="onPreselected($event)" (submitted)="onSubmitted($event)" />
+  </div>
+  <sp-recommended-for-you />
+
+  <!-- Loading --------------------------------------------------------- -->
+  @if (loading()) {
+    <div class="sp-skeleton-stack" role="status" aria-label="Building your career intelligence">
+      <div class="sp-skeleton sp-skeleton-hero"></div>
+      <div class="pro-layout">
+        <div class="sp-skeleton sp-skeleton-block span-12"></div>
+        <div class="sp-skeleton sp-skeleton-block span-7"></div>
+        <div class="sp-skeleton sp-skeleton-block span-5"></div>
+      </div>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error() && !gap()) {
+    <div class="sp-empty" role="status">
+      <sp-icon name="briefcase" [size]="22" />
+      <div>
+        <strong>Your career intelligence is not configured yet</strong>
+        <p>Choose your profile and target occupation above to compare positions, transferable skills and priority gaps.</p>
+      </div>
+    </div>
+  }
+
+  @if (gap()) {
+    <div class="pro-layout">
+      <!-- B. Career position overview --------------------------------- -->
+      <section class="sp-card sp-card-pad transition-card span-12" aria-labelledby="transition-title">
+        <div class="sp-card-heading">
+          <div>
+            <p class="sp-eyebrow">Career position</p>
+            <h2 id="transition-title">Current position → Target position</h2>
+            <p>Readiness is measured against every skill the target occupation requires.</p>
+          </div>
+          <span [class]="compatibilityBadge()">{{ compatibilityLabel() }}</span>
+        </div>
+
+        <div class="transition-body">
+          <div class="position-map">
+            <article class="position-box is-current">
+              <span class="position-label">Current position</span>
+              <h3>{{ currentPosition() }}</h3>
+              @if (experience()) {
+                <p class="position-meta">{{ experience() }}</p>
+              }
+              <div class="position-stats">
+                <span><strong>{{ transferableCount() }}</strong> transferable skills</span>
+              </div>
+            </article>
+
+            <div class="transition-bridge" aria-hidden="true">
+              <span class="bridge-line">
+                <span class="bridge-fill" [style.width.%]="transitionReadiness()"></span>
+              </span>
+              <span class="bridge-value">{{ transitionReadiness() }}%</span>
+            </div>
+
+            <article class="position-box is-target">
+              <span class="position-label">Target position</span>
+              <h3>{{ targetLabel() || 'No target selected' }}</h3>
+              <p class="position-meta">{{ requiredCount() }} required skills</p>
+              <div class="position-stats">
+                <span><strong>{{ priorityGapCount() }}</strong> priority gaps</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="compat-panel">
+            <sp-ring-chart
+              [value]="transitionReadiness()"
+              [tone]="matchTone()"
+              [size]="132"
+              [thickness]="11"
+              caption="Compatibility"
+              [accessibleLabel]="'Compatibility with ' + targetLabel() + ': ' + transitionReadiness() + '%'" />
+          </div>
+        </div>
+
+        <ul class="transition-metrics">
+          <li>
+            <span class="tm-value">{{ transferableCount() }}</span>
+            <span class="tm-label">Transferable</span>
+          </li>
+          <li>
+            <span class="tm-value">{{ priorityGapCount() }}</span>
+            <span class="tm-label">Priority gaps</span>
+          </li>
+          <li>
+            <span class="tm-value">{{ inProgressCount() }}</span>
+            <span class="tm-label">In progress</span>
+          </li>
+          <li>
+            <span class="tm-value">{{ roadmapPercent() }}%</span>
+            <span class="tm-label">Roadmap done</span>
+          </li>
+        </ul>
+
+        <sp-level-compare [level]="level()" [requiredLevel]="requiredLevel()" />
+      </section>
+
+      <!-- C. Professional skills intelligence -------------------------- -->
+      <section class="sp-section span-12" aria-labelledby="intel-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="intel-title">Professional skills intelligence</h2>
+            <p>What you already bring to the role, and what still separates you from it.</p>
+          </div>
+        </div>
+
+        <div class="intel-grid">
+          <article class="sp-card sp-card-pad intel-card">
+            <div class="sp-card-heading">
+              <div>
+                <h3>Transferable skills</h3>
+                <p>Required skills your profile already covers.</p>
+              </div>
+              <span class="sp-badge sp-badge-success">{{ transferableCount() }}</span>
+            </div>
+            @if (transferableBars().length) {
+              <sp-skill-bar-chart [bars]="transferableBars()" />
+            } @else {
+              <div class="sp-empty">
+                <sp-icon name="sparkle" [size]="20" />
+                <div>
+                  <strong>No transferable skill detected</strong>
+                  <p>Record the skills you already master in your profile so they can be matched to the target role.</p>
+                </div>
+              </div>
+            }
+          </article>
+
+          <article class="sp-card sp-card-pad intel-card">
+            <div class="sp-card-heading">
+              <div>
+                <h3>Priority skill gaps</h3>
+                <p>Missing skills, ordered by priority.</p>
+              </div>
+              <span class="sp-badge sp-badge-danger">{{ priorityGapCount() }}</span>
+            </div>
+
+            @if (visibleGaps().length) {
+              <ul class="gap-list">
+                @for (skill of visibleGaps(); track skill.id) {
+                  <li class="gap-row">
+                    <div class="gap-head">
+                      <button type="button" class="gap-name" (click)="openInGraph(skill.label || skill.id)">
+                        {{ displayName(skill.label || skill.id) }}
+                      </button>
+                      <span [class]="priorityClass(skill.priorite)">{{ priorityLabel(skill.priorite) }}</span>
+                    </div>
+                    <div class="gap-meter" role="img" [attr.aria-label]="'Priority ' + priorityLabel(skill.priorite)">
+                      @for (level of prioritySegments; track level) {
+                        <span class="gap-seg" [class.is-on]="level <= priorityLevel(skill.priorite)"></span>
+                      }
+                    </div>
+                    @if (recommendedFormationFor(skill)) {
+                      <p class="gap-note">
+                        <sp-icon name="book" [size]="13" /> Recommended · {{ recommendedFormationFor(skill) }}
+                      </p>
+                    }
+                  </li>
+                }
+              </ul>
+              @if (priorityGapCount() > visibleGaps().length) {
+                <p class="gap-more">
+                  {{ priorityGapCount() - visibleGaps().length }} more gaps in the full analysis.
+                </p>
+              }
+            } @else {
+              <div class="sp-empty">
+                <sp-icon name="check" [size]="20" />
+                <div>
+                  <strong>No priority gap remains</strong>
+                  <p>Every skill required by this occupation is already covered by your profile.</p>
+                </div>
+              </div>
+            }
+
+            <a routerLink="/skill-gap" class="sp-btn sp-btn-secondary sp-btn-block intel-action">
+              Open full analysis <sp-icon name="arrowRight" [size]="15" />
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <!-- D. Upskilling strategy --------------------------------------- -->
+      <section class="sp-section span-12" aria-labelledby="strategy-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="strategy-title">Upskilling strategy</h2>
+            <p>A structured plan to close the priority gaps of your target position.</p>
+          </div>
+          <a routerLink="/learning-path" class="sp-btn sp-btn-ghost">
+            Full strategy <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        </div>
+
+        <div class="strategy-grid">
+          <article class="sp-card sp-card-pad strategy-summary">
+            <h3>Strategic overview</h3>
+            <ul class="strategy-tiles">
+              <li>
+                <span class="st-value">{{ transferableCount() }}</span>
+                <span class="st-label">Transferable skills</span>
+              </li>
+              <li>
+                <span class="st-value">{{ priorityGapCount() }}</span>
+                <span class="st-label">Priority gaps</span>
+              </li>
+              <li>
+                <span class="st-value">{{ inProgressCount() }}</span>
+                <span class="st-label">In progress</span>
+              </li>
+              <li>
+                <span class="st-value">{{ roadmapTotal() }}</span>
+                <span class="st-label">Roadmap steps</span>
+              </li>
+            </ul>
+
+            <div class="strategy-progress">
+              <div class="strategy-progress-head">
+                <span>Progress toward closing gaps</span>
+                <strong>{{ roadmapPercent() }}%</strong>
+              </div>
+              <div class="progress-track">
+                <span class="progress-fill" [style.width.%]="roadmapPercent()"></span>
+              </div>
+              <p class="strategy-meta">
+                {{ roadmapCompleted() }} of {{ roadmapTotal() }} roadmap steps completed · {{ remainingText() }} estimated left
+              </p>
+            </div>
+          </article>
+
+          <article class="sp-card sp-card-pad strategy-actions">
+            <h3>Recommended learning actions</h3>
+
+            @if (upskillingRecommendations().length) {
+              <ul class="action-list">
+                @for (step of upskillingRecommendations(); track step.formation) {
+                  <li class="action-item">
+                    <sp-course-cover [courseId]="step.formation" [courseType]="step.type" class="action-thumb" />
+                    <div class="action-copy">
+                      <strong>{{ displayName(step.label || step.formation) }}</strong>
+                      <span>{{ getFormat(step.type) }} · {{ step.duree_heures ? step.duree_heures + 'h' : 'Duration n/a' }}</span>
+                    </div>
+                    <span class="sp-badge sp-badge-neutral">{{ phaseLabel(step.phase) }}</span>
+                  </li>
+                }
+              </ul>
+            } @else if (recommendedFormations().length) {
+              <ul class="formation-list">
+                @for (formation of recommendedFormations(); track formation) {
+                  <li><sp-icon name="book" [size]="15" /> <span>{{ formation }}</span></li>
+                }
+              </ul>
+            } @else {
+              <div class="sp-empty">
+                <sp-icon name="check" [size]="20" />
+                <div>
+                  <strong>No specialised training required</strong>
+                  <p>The catalogue currently offers no training covering the remaining gaps.</p>
+                </div>
+              </div>
+            }
+
+            <a routerLink="/learning-path" class="sp-btn sp-btn-primary sp-btn-block strategy-action">
+              View recommended upskilling <sp-icon name="arrowRight" [size]="15" />
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <!-- E. Career transition roadmap --------------------------------- -->
+      <section class="sp-section span-12" aria-labelledby="rail-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="rail-title">Career transition roadmap</h2>
+            <p>From your current position to the target role, in five stages.</p>
+          </div>
+          <a routerLink="/parcours-optimal" class="sp-btn sp-btn-ghost">
+            Optimise path <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        </div>
+
+        <ol class="rail">
+          @for (stage of transitionStages(); track stage.index) {
+            <li class="rail-step" [class]="'rail-step is-' + stage.state">
+              <span class="rail-index">{{ stage.index }}</span>
+              <h3>{{ stage.title }}</h3>
+              <p class="rail-note">{{ stage.note }}</p>
+              @if (stage.chips.length) {
+                <div class="rail-chips">
+                  @for (chip of stage.chips; track chip) {
+                    <span class="rail-chip">{{ chip }}</span>
+                  }
+                </div>
+              }
+            </li>
+          }
+        </ol>
+      </section>
+
+      <!-- F. Career opportunities -------------------------------------- -->
+      <section class="sp-section span-7" aria-labelledby="opportunities-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="opportunities-title">Career opportunities</h2>
+            <p>Occupations accessible with the skills already recorded in your profile.</p>
+          </div>
+        </div>
+
+        @if (accessibleJobs().length) {
+          <div class="opportunity-list">
+            @for (job of accessibleJobs(); track job) {
+              <article class="opportunity-card">
+                <span class="opportunity-icon" aria-hidden="true"><sp-icon name="briefcase" [size]="18" /></span>
+                <div class="opportunity-copy">
+                  <h3>{{ displayName(job) }}</h3>
+                  <p>Reachable — your profile already satisfies the requirements of this occupation.</p>
+                </div>
+                <button type="button" class="sp-btn sp-btn-secondary opportunity-action" (click)="openInGraph(job)">
+                  Explore opportunity <sp-icon name="arrowRight" [size]="15" />
+                </button>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="sp-empty">
+            <sp-icon name="alert" [size]="22" />
+            <div>
+              <strong>No alternative occupation is accessible yet</strong>
+              <p>Close the priority gaps of your target role to unlock new career opportunities.</p>
+            </div>
+          </div>
+        }
+      </section>
+
+      <aside class="pro-aside span-5">
+        <article class="sp-card sp-card-pad graph-card" aria-labelledby="graph-title">
+          <div class="sp-card-heading">
+            <div>
+              <h2 id="graph-title">Knowledge graph</h2>
+              <p>How your profile connects to skills and roles.</p>
+            </div>
+            <a routerLink="/knowledge-graph" class="icon-btn" aria-label="Explore the knowledge graph">
+              <sp-icon name="external" [size]="16" />
+            </a>
+          </div>
+          <div class="graph-preview">
+            @if (preview(); as p) {
+              <svg [attr.viewBox]="'0 0 ' + previewWidth + ' ' + previewHeight" class="graph-svg" role="img" aria-label="Preview of your connections in the knowledge graph">
+                @for (node of p.nodes; track node.node.id) {
+                  <line [attr.x1]="p.focus.x" [attr.y1]="p.focus.y" [attr.x2]="node.x" [attr.y2]="node.y" class="graph-edge" />
+                }
+                @for (node of p.nodes; track node.node.id) {
+                  <circle
+                    [attr.cx]="node.x"
+                    [attr.cy]="node.y"
+                    [attr.r]="previewRadius[node.node.type]"
+                    [attr.fill]="previewColors[node.node.type]"
+                    class="graph-node"
+                    (click)="openInGraph(node.node.label)">
+                    <title>{{ displayName(node.node.label) }}</title>
+                  </circle>
+                }
+                <circle
+                  [attr.cx]="p.focus.x"
+                  [attr.cy]="p.focus.y"
+                  [attr.r]="previewRadius.profile"
+                  [attr.fill]="previewColors.profile"
+                  class="graph-focus">
+                  <title>You</title>
+                </circle>
+              </svg>
+              <p class="graph-meta">{{ p.total }} connected entities</p>
+            } @else {
+              <div class="graph-placeholder">
+                <sp-icon name="graph" [size]="30" />
+                <p>No connections found yet.</p>
+              </div>
+            }
+          </div>
+        </article>
+
+        @if (nextStep(); as step) {
+          <article class="sp-card sp-card-pad next-action" aria-labelledby="next-title">
+            <p class="sp-eyebrow">Next action</p>
+            <h2 id="next-title">{{ displayName(step.label || step.formation) }}</h2>
+            <p class="next-meta">
+              <span><sp-icon name="layers" [size]="13" /> {{ getFormat(step.type) }}</span>
+              <span><sp-icon name="clock" [size]="13" /> {{ step.duree_heures ? step.duree_heures + 'h' : 'Duration n/a' }}</span>
+            </p>
+            <a routerLink="/learning-path" class="sp-btn sp-btn-primary sp-btn-block">Go to course</a>
+          </article>
+        }
+      </aside>
+
+      <!-- G. Professional quick actions -------------------------------- -->
+      <section class="sp-section span-12" aria-labelledby="actions-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="actions-title">Quick actions</h2>
+            <p>Every career intelligence tool, one click away.</p>
+          </div>
+        </div>
+        <div class="sp-quick-grid">
+          <a routerLink="/skill-gap" class="sp-quick-card">
+            <span class="sp-quick-icon"><sp-icon name="target" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Analyze career compatibility</strong><span>Compare your profile with any occupation.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+          <a routerLink="/learning-path" class="sp-quick-card">
+            <span class="sp-quick-icon tone-amber"><sp-icon name="trend" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Close priority skill gaps</strong><span>Work through the ordered roadmap.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+          <a routerLink="/parcours-optimal" class="sp-quick-card">
+            <span class="sp-quick-icon tone-cyan"><sp-icon name="sparkle" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Generate optimal learning path</strong><span>Rank the most efficient route to the role.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+          <a routerLink="/knowledge-graph" [queryParams]="{ q: 'Metier' }" class="sp-quick-card">
+            <span class="sp-quick-icon tone-emerald"><sp-icon name="compass" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Explore career opportunities</strong><span>Browse the occupations available.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+          <a routerLink="/knowledge-graph" class="sp-quick-card">
+            <span class="sp-quick-icon tone-rose"><sp-icon name="graph" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Open knowledge graph</strong><span>See how everything connects.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+          <a routerLink="/semantic-assistant" class="sp-quick-card">
+            <span class="sp-quick-icon"><sp-icon name="briefcase" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Open semantic assistant</strong><span>Ask a strategic career question.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+        </div>
+      </section>
+    </div>
+  }
+</section>

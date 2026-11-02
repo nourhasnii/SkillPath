@@ -1,0 +1,67 @@
+<section class="dashboard-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">ADMINISTRATION · ANALYSES</p>
+      <h1>Compétences partagées entre métiers</h1>
+      <p class="page-description">
+        Compétences requises par au moins deux métiers selon les relations de l’ontologie.
+      </p>
+    </div>
+    <button class="button-secondary" type="button" (click)="refresh()" [disabled]="loading()">
+      {{ loading() ? 'Analyse…' : 'Actualiser' }}
+    </button>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="state-card error-state" role="alert">
+      <strong>Analyse indisponible</strong>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <p class="muted-note analysis-summary">
+    {{ totalCompetencies() }} compétence(s) partagée(s) identifiée(s)
+  </p>
+
+  <div class="entity-table-wrap">
+    @if (loading() && !loaded()) {
+      <div class="table-skeleton"></div>
+      <div class="table-skeleton"></div>
+      <div class="table-skeleton"></div>
+    } @else if (competencies().length) {
+      <table class="entity-table">
+        <thead>
+          <tr>
+            <th>COMPÉTENCE</th>
+            <th>NOMBRE DE MÉTIERS</th>
+            <th>MÉTIERS CONCERNÉS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (competency of competencies(); track competency.id) {
+            <tr>
+              <td>
+                <strong>{{ competency.name }}</strong>
+                <span class="entity-id">{{ competency.id }}</span>
+              </td>
+              <td><span class="analysis-count">{{ competency.occupation_count }}</span></td>
+              <td>
+                <ul class="analysis-list">
+                  @for (occupation of competency.occupations; track occupation.id) {
+                    <li>{{ occupation.name }} <span class="entity-id">{{ occupation.id }}</span></li>
+                  }
+                </ul>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else if (!loading() && !errorMessage()) {
+      <div class="state-card">
+        <span class="empty-state-icon" aria-hidden="true">◎</span>
+        <strong>Aucune compétence partagée</strong>
+        <p>Aucune compétence n’est actuellement requise par plusieurs métiers.</p>
+      </div>
+    }
+  </div>
+</section>

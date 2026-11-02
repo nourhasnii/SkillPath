@@ -1,0 +1,75 @@
+:host { display: block; }
+
+.recommendations-card {
+  display: grid;
+  gap: 18px;
+  padding: 22px 24px;
+}
+
+.recommendations-heading,
+.recommendation-skill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recommendations-heading h2,
+.recommendation-skill h3 {
+  margin: 4px 0 0;
+  color: var(--sp-ink-900);
+}
+
+.recommendation-skill h3 { font-size: 15px; }
+
+.recommendations-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 14px;
+}
+
+.recommendation-item {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius-md);
+  background: var(--sp-surface-muted);
+}
+
+.recommendation-why,
+.recommendations-state {
+  margin: 0;
+  color: var(--sp-ink-500);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.recommendation-why strong { color: var(--sp-ink-700); }
+
+.recommendation-teachings {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recommendation-teachings li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--sp-ink-700);
+  font-size: 12px;
+}
+
+.teaching-meta {
+  flex: 0 0 auto;
+  color: var(--sp-ink-400);
+}
+
+@media (max-width: 520px) {
+  .recommendations-card { padding: 18px; }
+  .recommendation-teachings li { flex-direction: column; gap: 2px; }
+}

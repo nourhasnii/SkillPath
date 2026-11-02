@@ -1,0 +1,218 @@
+<section class="skill-gap" aria-labelledby="skill-gap-title">
+  <header class="page-head">
+    <div class="page-head-text">
+      <p class="sp-eyebrow">Career intelligence</p>
+      <h1 id="skill-gap-title">Skill gap analysis</h1>
+      <p class="page-lede">
+        @if (report(); as data) {
+          How your profile compares with the requirements of
+          <strong>{{ occupationLabel() }}</strong>.
+        } @else {
+          Compare a profile with a target occupation and see exactly which skills are already
+          in place, which are still missing, and what would close the gap.
+        }
+      </p>
+    </div>
+
+    @if (report()) {
+      <button
+        type="button"
+        class="sp-btn sp-btn-secondary page-head-action"
+        (click)="regenerate()"
+        [disabled]="loading()">
+        <sp-icon name="refresh" [size]="16" />
+        {{ loading() ? 'Analysing…' : 'Regenerate' }}
+      </button>
+    }
+  </header>
+
+  <sp-career-selector (preselected)="onPreselected($event)" (submitted)="onSubmitted($event)" />
+  <sp-recommended-for-you />
+
+  @if (loading()) {
+    <div class="sp-state" role="status">
+      <span class="sp-spinner" aria-hidden="true"></span>
+      <p>Running your analysis…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error() && !report()) {
+    <div class="sp-state">
+      <sp-icon name="target" [size]="26" />
+      <p>Select a profile and a target occupation to run the analysis.</p>
+    </div>
+  }
+
+  @if (report(); as data) {
+    <div class="report" aria-live="polite">
+      <div class="sp-metrics">
+        <article class="sp-metric">
+          <span class="sp-metric-label">Overall match</span>
+          <span class="sp-metric-value">{{ data.match_score }}%</span>
+          <span class="sp-metric-hint">{{ data.competences_acquises.length }} of {{ data.competences_requises.length }} required skills</span>
+        </article>
+        <article class="sp-metric">
+          <span class="sp-metric-label">Skills mastered</span>
+          <span class="sp-metric-value">{{ data.competences_acquises.length }}</span>
+          <span class="sp-metric-hint">Added to your profile</span>
+        </article>
+        <article class="sp-metric">
+          <span class="sp-metric-label">Missing skills</span>
+          <span class="sp-metric-value">{{ data.competences_manquantes.length }}</span>
+          <span class="sp-metric-hint">Required, with no training yet in your profile</span>
+        </article>
+        <article class="sp-metric">
+          <span class="sp-metric-label">Needs improvement</span>
+          <span class="sp-metric-value">{{ data.competences_en_cours.length }}</span>
+          <span class="sp-metric-hint">Covered by a training you already followed</span>
+        </article>
+      </div>
+
+      <div class="chart-grid">
+        <article class="sp-card chart-card match-card">
+          <div class="sp-card-heading">
+            <div>
+              <p class="sp-eyebrow">Readiness</p>
+              <h2>Career readiness</h2>
+            </div>
+            @if (readiness(); as band) {
+              <span class="sp-badge" [class]="'sp-badge ' + badgeTone(band.tone)">{{ band.label }}</span>
+            }
+          </div>
+
+          @if (readiness(); as band) {
+            <div class="match-body">
+              <sp-ring-chart
+                [value]="data.match_score"
+                [tone]="band.tone"
+                caption="profile match"
+                [accessibleLabel]="'Overall match ' + data.match_score + ' percent for ' + occupationLabel()" />
+              <p class="match-narrative">{{ band.narrative }}</p>
+            </div>
+          }
+
+          @if (level() || requiredLevel()) {
+            <sp-level-compare [level]="level()" [requiredLevel]="requiredLevel()" />
+          }
+        </article>
+
+        <article class="sp-card chart-card">
+          <div class="sp-card-heading">
+            <div>
+              <p class="sp-eyebrow">Requirement coverage</p>
+              <h2>Mastery footprint</h2>
+            </div>
+          </div>
+          @if (radarAxes().length) {
+            <sp-radar-chart [axes]="radarAxes()" [accessibleLabel]="radarLabel()" />
+          } @else {
+            <p class="chart-empty">This occupation declares no required skill yet, so there is no footprint to plot.</p>
+          }
+        </article>
+
+        <article class="sp-card chart-card">
+          <div class="sp-card-heading">
+            <div>
+              <p class="sp-eyebrow">Balance</p>
+              <h2>Skill distribution</h2>
+            </div>
+          </div>
+          @if (data.competences_requises.length) {
+            <sp-distribution-chart
+              [segments]="distribution()"
+              [accessibleLabel]="'Skill distribution: ' + data.competences_acquises.length + ' mastered, ' + data.competences_en_cours.length + ' in progress, ' + data.competences_manquantes.length + ' missing.'" />
+          } @else {
+            <p class="chart-empty">No required skills were returned for this occupation.</p>
+          }
+        </article>
+      </div>
+
+      <article class="sp-card chart-card">
+        <div class="sp-card-heading">
+          <div>
+            <p class="sp-eyebrow">Proficiency vs requirement</p>
+            <h2>Most urgent gaps</h2>
+          </div>
+        </div>
+        @if (coverageBars().length) {
+          <sp-skill-bar-chart [bars]="coverageBars()" />
+          <p class="chart-note">{{ coverageNote() }}</p>
+        } @else {
+          <p class="chart-empty">No required skills were returned for this occupation.</p>
+        }
+      </article>
+
+      <article class="sp-card comparison-card">
+        <div class="sp-card-heading">
+          <div>
+            <p class="sp-eyebrow">Skill by skill</p>
+            <h2>Skill comparison</h2>
+          </div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Filter skills by status">
+          @for (tab of tabs(); track tab.key) {
+            <button
+              type="button"
+              role="tab"
+              class="sp-chip"
+              [class.is-active]="activeTab() === tab.key"
+              [attr.aria-selected]="activeTab() === tab.key"
+              (click)="selectTab(tab.key)">
+              {{ tab.label }}
+              <span class="chip-count">{{ tab.count }}</span>
+            </button>
+          }
+        </div>
+
+        @if (filteredSkills().length) {
+          <div class="comparison-table" role="table" aria-label="Skill comparison">
+            <div class="comparison-row comparison-head" role="row">
+              <span role="columnheader">Skill</span>
+              <span role="columnheader">Status</span>
+              <span role="columnheader">Gap</span>
+              <span role="columnheader">Priority</span>
+              <span role="columnheader">Recommended action</span>
+            </div>
+
+            @for (skill of filteredSkills(); track skill.id) {
+              <div class="comparison-row" role="row">
+                <span class="cell-skill" role="cell">
+                  <span class="skill-dot" [class]="'skill-dot ' + skill.statut" aria-hidden="true"></span>
+                  {{ displayName(skill.label) }}
+                </span>
+                <span role="cell">
+                  <span class="sp-badge" [class]="'sp-badge ' + statusTone(skill.statut)">{{ statusLabel(skill.statut) }}</span>
+                </span>
+                <span class="cell-gap" [class]="'cell-gap ' + skill.statut" role="cell">{{ gapLabel(skill.statut) }}</span>
+                <span role="cell">
+                  <span class="sp-badge" [class]="'sp-badge ' + priorityTone(skill.priorite)">{{ priorityLabel(skill.priorite) }}</span>
+                </span>
+                <span class="cell-action" role="cell">{{ actionLabel(skill) }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="chart-empty">No skill matches this filter.</p>
+        }
+
+        @if (data.competences_manquantes.length || data.competences_en_cours.length) {
+          <div class="comparison-footer">
+            <a class="sp-btn sp-btn-primary" routerLink="/learning-path">
+              <sp-icon name="path" [size]="16" />
+              Build the learning path
+            </a>
+            <a class="sp-btn sp-btn-ghost" routerLink="/knowledge-graph">
+              Explore connections
+              <sp-icon name="arrowRight" [size]="15" />
+            </a>
+          </div>
+        }
+      </article>
+    </div>
+  }
+</section>

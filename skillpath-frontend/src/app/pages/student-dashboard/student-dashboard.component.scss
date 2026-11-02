@@ -1,0 +1,512 @@
+:host {
+  display: block;
+}
+
+.student-dashboard {
+  display: grid;
+  gap: 22px;
+}
+
+/* --------------------------------------------------------------- header */
+
+.sd-hero .hero-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--sp-line);
+  border-radius: 999px;
+  color: var(--sp-ink-500);
+  background: var(--sp-surface-muted);
+  font-size: 11.5px;
+}
+
+.sd-hero .hero-target strong {
+  color: var(--sp-ink-900);
+  font-weight: 650;
+}
+
+.sd-selector {
+  margin-top: -4px;
+}
+
+/* ------------------------------------------------- 12-column dashboard */
+
+.sd-layout {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 22px;
+  align-items: start;
+}
+
+/* ----------------------------------------------------- readiness (B) */
+
+.readiness-card .sp-card-heading {
+  align-items: flex-start;
+}
+
+.readiness-body {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  flex-wrap: wrap;
+}
+
+.readiness-stats {
+  display: grid;
+  flex: 1;
+  min-width: 220px;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+}
+
+.rs-item {
+  display: grid;
+  gap: 3px;
+  padding: 14px 16px;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius-md);
+  background: var(--sp-surface-muted);
+}
+
+.rs-value {
+  color: var(--sp-ink-900);
+  font-size: 23px;
+  font-weight: 760;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
+}
+
+.rs-label {
+  color: var(--sp-ink-500);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.rs-mastered .rs-value { color: #0B7A5A; }
+.rs-progress .rs-value { color: #96620A; }
+.rs-missing .rs-value { color: #A8123A; }
+
+.readiness-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--sp-line-strong);
+}
+
+.readiness-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--sp-ink-500);
+  font-size: 12.5px;
+}
+
+.readiness-target strong {
+  color: var(--sp-ink-900);
+  font-weight: 650;
+}
+
+/* --------------------------------------------- continue learning (C) */
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(266px, 1fr));
+  gap: 18px;
+}
+
+.course-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius-lg);
+  background: var(--sp-surface);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--sp-violet-400);
+  box-shadow: var(--sp-shadow-md);
+}
+
+.course-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--sp-surface-muted);
+}
+
+.course-thumb sp-course-cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.course-format,
+.course-status {
+  position: absolute;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.course-format {
+  top: 12px;
+  left: 12px;
+  color: var(--sp-indigo-600);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.course-status {
+  top: 12px;
+  right: 12px;
+  color: #fff;
+  background: rgba(91, 79, 233, 0.92);
+}
+
+.course-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px 18px;
+}
+
+.course-body h3 {
+  margin: 0;
+  color: var(--sp-ink-900);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.32;
+}
+
+.course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  color: var(--sp-ink-500);
+  font-size: 12px;
+}
+
+.course-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.course-covers {
+  margin: 0;
+  color: var(--sp-ink-500);
+  font-size: 12px;
+}
+
+.course-body .sp-btn {
+  margin-top: auto;
+}
+
+/* ------------------------------------------------------- skills (D) */
+
+.skill-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+  gap: 16px;
+}
+
+.skill-group {
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--sp-line);
+  border-left: 3px solid var(--sp-line-strong);
+  border-radius: var(--sp-radius-lg);
+  background: var(--sp-surface);
+}
+
+.skill-group.is-manquante { border-left-color: var(--sp-rose-500); }
+.skill-group.is-en_cours { border-left-color: var(--sp-amber-500); }
+.skill-group.is-acquise { border-left-color: var(--sp-emerald-500); }
+
+.skill-group-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.skill-dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--sp-line-strong);
+}
+
+.skill-group.is-manquante .skill-dot { background: var(--sp-rose-500); }
+.skill-group.is-en_cours .skill-dot { background: var(--sp-amber-500); }
+.skill-group.is-acquise .skill-dot { background: var(--sp-emerald-500); }
+
+.skill-group-head h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--sp-ink-900);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.skill-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  color: var(--sp-ink-500);
+  background: var(--sp-surface-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.skill-group-head p {
+  margin: 3px 0 0;
+  color: var(--sp-ink-500);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ------------------------------------------------------ roadmap (E) */
+
+.roadmap {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roadmap-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+}
+
+.roadmap-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 34px;
+  bottom: -14px;
+  left: 14px;
+  width: 2px;
+  background: var(--sp-line);
+}
+
+.roadmap-marker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-top: 2px;
+  border: 2px solid var(--sp-line-strong);
+  border-radius: 50%;
+  color: var(--sp-ink-500);
+  background: var(--sp-surface);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.roadmap-step.is-done .roadmap-marker {
+  border-color: var(--sp-emerald-500);
+  color: #fff;
+  background: var(--sp-emerald-500);
+}
+
+.roadmap-step.is-current .roadmap-marker {
+  border-color: var(--sp-indigo-500);
+  color: var(--sp-indigo-600);
+  box-shadow: 0 0 0 4px var(--sp-violet-100);
+}
+
+.roadmap-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius-md);
+  background: var(--sp-surface-muted);
+}
+
+.roadmap-step.is-current .roadmap-card {
+  border-color: var(--sp-violet-400);
+  background: var(--sp-surface);
+  box-shadow: var(--sp-shadow-sm);
+}
+
+.roadmap-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.roadmap-card-head h3 {
+  margin: 0;
+  color: var(--sp-ink-900);
+  font-size: 14px;
+  font-weight: 680;
+  line-height: 1.35;
+}
+
+.roadmap-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  color: var(--sp-ink-500);
+  font-size: 12px;
+}
+
+.roadmap-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.roadmap-flag.is-done { color: #0B7A5A; font-weight: 650; }
+.roadmap-flag.is-current { color: var(--sp-indigo-600); font-weight: 650; }
+
+.roadmap-prereq {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--sp-ink-500);
+  font-size: 11.5px;
+}
+
+/* -------------------------------------------------------- aside */
+
+.sd-aside {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.progress-stats {
+  display: grid;
+  flex: 1;
+  min-width: 168px;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progress-stats li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 13px;
+  border-radius: var(--sp-radius-sm);
+  background: var(--sp-surface-muted);
+}
+
+.progress-stats strong {
+  color: var(--sp-ink-900);
+  font-size: 15px;
+  font-weight: 740;
+}
+
+.progress-stats span {
+  color: var(--sp-ink-500);
+  font-size: 11.5px;
+}
+
+/* --------------------------------------------- opportunities (F) */
+
+.opportunity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(288px, 1fr));
+  gap: 16px;
+}
+
+/* ------------------------------------------------------- states */
+
+.empty-action { margin-top: 12px; }
+
+/* --------------------------------------------------- responsive */
+
+@media (max-width: 1180px) {
+  .readiness-body { align-items: stretch; }
+
+  .readiness-stats { min-width: 0; }
+}
+
+@media (max-width: 760px) {
+  .student-dashboard { gap: 18px; }
+
+  .sd-layout { gap: 18px; }
+
+  .sp-hero { padding: 22px; }
+
+  .readiness-body {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .readiness-foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .readiness-foot .sp-btn { justify-content: center; }
+
+  .course-grid,
+  .skill-groups,
+  .opportunity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .opportunity-action { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  .sp-hero { padding: 18px; }
+
+  .sp-avatar {
+    width: 52px;
+    height: 52px;
+    flex-basis: 52px;
+    border-radius: 17px;
+    font-size: 18px;
+  }
+
+  .readiness-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

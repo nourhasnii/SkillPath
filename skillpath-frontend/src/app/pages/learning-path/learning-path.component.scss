@@ -1,0 +1,24 @@
+:host { display: block; }
+.learning-path-page { display: grid; gap: 22px; }
+.page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px; }
+.page-head h1 { margin: 6px 0 0; color: var(--sp-ink-900); font-size: clamp(26px, 3vw, 34px); font-weight: 750; }
+.page-lede { max-width: 700px; margin: 10px 0 0; color: var(--sp-ink-500); font-size: 14px; line-height: 1.65; }
+.path-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.path-summary article { display: grid; gap: 8px; padding: 16px; border: 1px solid var(--sp-line); border-radius: var(--sp-radius-md); background: var(--sp-surface); }
+.path-summary span,.step-title span { color: var(--sp-ink-500); font-size: 11px; }
+.path-summary strong { color: var(--sp-ink-900); font-size: 15px; }
+.roadmap { display: grid; gap: 16px; }
+.section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.section-head h2 { margin: 0; color: var(--sp-ink-900); font-size: 18px; }
+.section-head p { margin: 6px 0 0; color: var(--sp-ink-500); font-size: 12px; }
+.step-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.step-card { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; padding: 16px; border: 1px solid var(--sp-line); border-radius: var(--sp-radius-md); background: var(--sp-surface); }
+.step-number { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 10px; color: white; background: var(--sp-gradient-brand); font-weight: 750; }
+.step-main { display: grid; gap: 7px; min-width: 0; }
+.step-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.step-title h3 { margin: 0; color: var(--sp-ink-900); font-size: 14px; }
+.step-main p { margin: 0; color: var(--sp-ink-500); font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.step-actions { display: flex; align-items: center; gap: 7px; margin-top: 3px; }
+.reorder { width: 30px; height: 30px; border: 1px solid var(--sp-line-strong); border-radius: 7px; color: var(--sp-ink-700); background: var(--sp-surface); cursor: pointer; }
+.reorder:disabled { opacity: .4; cursor: not-allowed; }
+@media (max-width: 600px) { .section-head > button { width: 100%; } .step-card { padding: 12px; } }

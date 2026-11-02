@@ -1,0 +1,317 @@
+<section class="career-dashboard" aria-labelledby="career-dashboard-title">
+  <sp-career-selector (preselected)="onPreselected($event)" (submitted)="onSubmitted($event)" />
+
+  @if (loading()) {
+    <div class="sp-state" role="status">
+      <span class="sp-spinner" aria-hidden="true"></span>
+      <p>Building your career overview from the knowledge graph…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error() && !gap()) {
+    <div class="sp-state">
+      <sp-icon name="grid" [size]="26" />
+      <p>
+        Select a profile and a target occupation to build your career overview. Students and
+        professionals are analysed against their own ontology profile.
+      </p>
+    </div>
+  }
+
+  @if (gap(); as report) {
+    <section class="hero sp-card" aria-label="Career readiness">
+      <div class="hero-copy">
+        <p class="sp-eyebrow">{{ today }}</p>
+        <h1 id="career-dashboard-title">{{ greeting() }}</h1>
+        <p class="hero-lede">
+          @if (occupationLabel()) {
+            You are working towards <strong>{{ occupationLabel() }}</strong>.
+          } @else {
+            No target occupation is set on your profile yet, so no role can be compared against.
+          }
+          @if (context(); as ctx) {
+            Your profile is {{ ctx.profileCompletion }}% complete.
+          }
+        </p>
+
+        <div class="hero-actions">
+          <a class="sp-btn sp-btn-primary" routerLink="/skill-gap">
+            <sp-icon name="target" [size]="16" />
+            Skill gap analysis
+          </a>
+          <a class="sp-btn sp-btn-secondary" routerLink="/learning-path">
+            <sp-icon name="path" [size]="16" />
+            Learning path
+          </a>
+          <a class="sp-btn sp-btn-ghost" routerLink="/knowledge-graph">
+            <sp-icon name="graph" [size]="16" />
+            Knowledge graph
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <sp-ring-chart
+          [value]="report.match_score"
+          [tone]="readiness()?.tone ?? 'violet'"
+          [size]="158"
+          [thickness]="13"
+          caption="Career readiness"
+          [accessibleLabel]="readinessLabel()" />
+        @if (readiness(); as band) {
+          <p class="hero-band">{{ band.label }}</p>
+        }
+      </div>
+    </section>
+
+    <div class="sp-metrics">
+      <article class="sp-metric">
+        <span class="sp-metric-label">Overall match</span>
+        <span class="sp-metric-value">{{ report.match_score }}%</span>
+        <span class="sp-metric-hint">Required skills already declared as acquired</span>
+      </article>
+      <article class="sp-metric">
+        <span class="sp-metric-label">Skills mastered</span>
+        <span class="sp-metric-value">{{ report.competences_acquises.length }}</span>
+        <span class="sp-metric-hint">of {{ report.competences_requises.length }} required for this occupation</span>
+      </article>
+      <article class="sp-metric">
+        <span class="sp-metric-label">Missing skills</span>
+        <span class="sp-metric-value">{{ missingTotal() }}</span>
+        <span class="sp-metric-hint">Required by the occupation, not declared in your profile</span>
+      </article>
+      <article class="sp-metric">
+        <span class="sp-metric-label">Path progress</span>
+        <span class="sp-metric-value">{{ path()?.progression?.pourcentage ?? 0 }}%</span>
+        <span class="sp-metric-hint">
+          @if (path(); as roadmap) {
+            {{ roadmap.progression.terminees }} of {{ roadmap.progression.total }} trainings completed
+          } @else {
+            No learning path has been generated yet
+          }
+        </span>
+      </article>
+    </div>
+
+    <div class="dash-grid">
+      <article class="sp-card sp-card-pad missing-card" aria-labelledby="missing-title">
+        <div class="sp-card-heading">
+          <div>
+            <h2 id="missing-title">Most important missing skills</h2>
+            <p>Ranked by the priority the analysis assigned to each gap.</p>
+          </div>
+          <a class="sp-btn sp-btn-ghost section-link" routerLink="/skill-gap">
+            Full analysis
+            <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        </div>
+
+        @if (topMissing().length) {
+          <ul class="gap-list" role="list">
+            @for (skill of topMissing(); track skill.id) {
+              <li>
+                <div class="gap-head">
+                  <span class="gap-name">{{ displayName(skill.label) }}</span>
+                  <span class="sp-badge" [class]="priorityTone(skill)">{{ priorityLabel(skill) }}</span>
+                </div>
+                <p class="gap-action">{{ actionLabel(skill) }}</p>
+              </li>
+            }
+          </ul>
+          @if (missingTotal() > topMissing().length) {
+            <p class="gap-more">
+              {{ missingTotal() - topMissing().length }} more missing
+              skill{{ missingTotal() - topMissing().length === 1 ? '' : 's' }} are listed in the full analysis.
+            </p>
+          }
+        } @else {
+          <div class="inline-empty">
+            <sp-icon name="check" [size]="22" />
+            <p>
+              No skill required by this occupation is missing from your profile — every required
+              skill is already declared as acquired.
+            </p>
+          </div>
+        }
+      </article>
+
+      <article class="sp-card sp-card-pad next-card" aria-labelledby="next-title">
+        <div class="sp-card-heading">
+          <div>
+            <h2 id="next-title">Next recommended activity</h2>
+            <p>The first training of your generated path still to be completed.</p>
+          </div>
+        </div>
+
+        @if (nextActivity(); as step) {
+          <div class="next-body">
+            <span class="next-phase">{{ phaseName(step.phase) }}</span>
+            <h3>{{ courseName(step) }}</h3>
+            @if (covers(step)) {
+              <p class="next-covers">Covers {{ covers(step) }}</p>
+            }
+            <p class="next-order">Step {{ step.ordre }} of {{ path()?.etapes?.length ?? 0 }} in the roadmap</p>
+            <a class="sp-btn sp-btn-primary next-action" routerLink="/learning-path">
+              <sp-icon name="path" [size]="16" />
+              Open the learning path
+            </a>
+          </div>
+        } @else if (path()?.etapes?.length) {
+          <div class="inline-empty">
+            <sp-icon name="check" [size]="22" />
+            <p>Every training in your generated path is recorded as completed.</p>
+          </div>
+        } @else {
+          <div class="inline-empty">
+            <sp-icon name="path" [size]="22" />
+            <p>No training is required, or no path has been generated for this occupation yet.</p>
+          </div>
+        }
+      </article>
+    </div>
+
+    <div class="dash-grid dash-grid-split">
+      <article class="sp-card sp-card-pad path-preview" aria-labelledby="path-preview-title">
+        <div class="sp-card-heading">
+          <div>
+            <h2 id="path-preview-title">Your learning path</h2>
+            <p>Prerequisite-ordered roadmap towards {{ occupationLabel() || 'your target occupation' }}.</p>
+          </div>
+          <a class="sp-btn sp-btn-ghost section-link" routerLink="/learning-path">
+            Full roadmap
+            <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        </div>
+
+        @if (pathPreview().length) {
+          <ol class="preview-steps" role="list">
+            @for (step of pathPreview(); track step.formation) {
+              <li [class.is-complete]="step.statut === 'terminee'">
+                <span class="step-index" aria-hidden="true">{{ step.ordre }}</span>
+                <span class="step-copy">
+                  <strong>{{ courseName(step) }}</strong>
+                  <small>{{ phaseName(step.phase) }}</small>
+                </span>
+                @if (step.statut === 'terminee') {
+                  <span class="sp-badge sp-badge-success">Completed</span>
+                }
+              </li>
+            }
+          </ol>
+          @if ((path()?.etapes?.length ?? 0) > pathPreview().length) {
+            <p class="gap-more">
+              {{ (path()?.etapes?.length ?? 0) - pathPreview().length }} further
+              step{{ (path()?.etapes?.length ?? 0) - pathPreview().length === 1 ? '' : 's' }} follow in the roadmap.
+            </p>
+          }
+        } @else {
+          <div class="inline-empty">
+            <sp-icon name="check" [size]="22" />
+            <p>Your profile already covers every skill this occupation declares.</p>
+          </div>
+        }
+      </article>
+
+      <article class="sp-card sp-card-pad graph-preview" aria-labelledby="graph-preview-title">
+        <div class="sp-card-heading">
+          <div>
+            <h2 id="graph-preview-title">Knowledge graph</h2>
+            <p>Your profile and the entities the ontology links to it.</p>
+          </div>
+          <a class="sp-btn sp-btn-ghost section-link" routerLink="/knowledge-graph">
+            Explore
+            <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        </div>
+
+        @if (preview(); as graphPreview) {
+          <svg
+            class="preview-canvas"
+            [attr.viewBox]="'0 0 ' + previewWidth + ' ' + previewHeight"
+            role="img"
+            [attr.aria-label]="'Knowledge graph preview: ' + graphPreview.total + ' entities are linked to your profile. Select an entity to open it in the full graph.'">
+            @for (item of graphPreview.nodes; track item.node.id) {
+              <line
+                class="preview-edge"
+                [attr.x1]="graphPreview.focus.x"
+                [attr.y1]="graphPreview.focus.y"
+                [attr.x2]="item.x"
+                [attr.y2]="item.y" />
+            }
+
+            @for (item of graphPreview.nodes; track item.node.id) {
+              <g
+                class="preview-node"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="'Open ' + displayName(item.node.label) + ' in the knowledge graph'"
+                (click)="openInGraph(item.node.label)"
+                (keydown.enter)="openInGraph(item.node.label)"
+                (keydown.space)="openInGraph(item.node.label)">
+                <title>{{ displayName(item.node.label) }}</title>
+                <circle
+                  [attr.cx]="item.x"
+                  [attr.cy]="item.y"
+                  [attr.r]="previewRadius[item.node.type]"
+                  [attr.fill]="previewColors[item.node.type]" />
+              </g>
+            }
+
+            <g class="preview-focus">
+              <title>{{ displayName(graphPreview.focus.node.label) }}</title>
+              <circle
+                [attr.cx]="graphPreview.focus.x"
+                [attr.cy]="graphPreview.focus.y"
+                [attr.r]="previewRadius.profile"
+                [attr.fill]="previewColors.profile" />
+            </g>
+          </svg>
+
+          <p class="preview-note">
+            {{ graphPreview.total }} linked entit{{ graphPreview.total === 1 ? 'y' : 'ies' }} ·
+            showing {{ graphPreview.nodes.length }}
+            @if (graphPreview.hidden) {
+              , {{ graphPreview.hidden }} more hidden
+            }
+          </p>
+
+          <ul class="preview-legend" role="list">
+            <li><span class="legend-dot" [style.background]="previewColors.profile" aria-hidden="true"></span> Profile</li>
+            <li><span class="legend-dot" [style.background]="previewColors.skill" aria-hidden="true"></span> Skill</li>
+            <li><span class="legend-dot" [style.background]="previewColors.job" aria-hidden="true"></span> Occupation</li>
+            <li><span class="legend-dot" [style.background]="previewColors.training" aria-hidden="true"></span> Training</li>
+          </ul>
+        } @else {
+          <div class="inline-empty">
+            <sp-icon name="graph" [size]="22" />
+            <p>
+              No entity of this profile is visible in the graph yet. Declare skills on your profile
+              to connect it to the ontology.
+            </p>
+          </div>
+        }
+      </article>
+    </div>
+
+    <article class="sp-card sp-card-pad activity-card" aria-labelledby="activity-title">
+      <div class="sp-card-heading">
+        <div>
+          <h2 id="activity-title">Recent activity</h2>
+          <p>What SkillPath currently records about your account.</p>
+        </div>
+      </div>
+      <p class="activity-note">
+        SkillPath does not keep a timestamped activity timeline, so no history is shown here rather
+        than an invented one. Your profile stores {{ context()?.acquiredSkills?.length ?? 0 }}
+        declared skill{{ (context()?.acquiredSkills?.length ?? 0) === 1 ? '' : 's' }} and
+        {{ context()?.followedTrainings?.length ?? 0 }}
+        followed training{{ (context()?.followedTrainings?.length ?? 0) === 1 ? '' : 's' }} — the figures
+        above are derived from exactly that data.
+      </p>
+    </article>
+  }
+</section>

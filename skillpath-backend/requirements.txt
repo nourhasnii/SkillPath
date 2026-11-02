@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+SPARQLWrapper
+rdflib
+argon2-cffi
+python-dotenv
+spacy
+rapidfuzz
+sentence-transformers

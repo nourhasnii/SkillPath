@@ -1,0 +1,126 @@
+<section class="dashboard-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">ADMINISTRATION</p>
+      <h1>Détection des compétences redondantes</h1>
+      <p class="page-description">
+        Analyse des compétences techniques et transverses de l'ontologie pour repérer les doublons
+        ou quasi-doublons potentiels. Aucune compétence n'est fusionnée ni supprimée automatiquement.
+      </p>
+    </div>
+    <button class="button-secondary" type="button" (click)="scan()" [disabled]="loading()">
+      {{ loading() ? 'Analyse…' : "Relancer l'analyse" }}
+    </button>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="state-card error-state" role="alert">
+      <strong>Analyse indisponible</strong>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <div class="toolbar redundant-toolbar">
+    <label class="search-control">
+      <span aria-hidden="true">⌕</span>
+      <input
+        aria-label="Rechercher une compétence"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        placeholder="Rechercher par nom ou identifiant"
+      >
+    </label>
+    <label>
+      <select
+        class="filter-select"
+        aria-label="Filtrer par classe de compétence"
+        [ngModel]="classFilter()"
+        (ngModelChange)="classFilter.set($event)"
+      >
+        <option value="">Toutes les classes</option>
+        @for (option of classOptions(); track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      <select
+        class="filter-select"
+        aria-label="Seuil de similarité"
+        [ngModel]="threshold()"
+        (ngModelChange)="setThreshold($event)"
+      >
+        @for (option of thresholdOptions; track option) {
+          <option [ngValue]="option">Seuil {{ option * 100 }} %</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  <p class="muted-note redundant-summary">
+    {{ filteredPairs().length }} paire(s) affichée(s) ·
+    {{ pairs().length }} détectée(s) ·
+    {{ totalCompetencies() }} compétence(s) analysée(s) au seuil de
+    {{ appliedThreshold() * 100 }} %
+  </p>
+
+  <div class="entity-table-wrap">
+    @if (loading()) {
+      <div class="table-skeleton"></div>
+      <div class="table-skeleton"></div>
+      <div class="table-skeleton"></div>
+    } @else if (filteredPairs().length) {
+      <table class="entity-table redundant-table">
+        <thead>
+          <tr>
+            <th>COMPÉTENCE A</th>
+            <th>COMPÉTENCE B</th>
+            <th>SIMILARITÉ</th>
+            <th>EXPLICATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pair of filteredPairs(); track pair.id_a + ':' + pair.id_b) {
+            <tr>
+              <td>
+                <div class="entity-name">
+                  <span class="entity-avatar">{{ displayName(pair.name_a).slice(0, 1).toUpperCase() }}</span>
+                  <span class="pair-label">
+                    {{ displayName(pair.name_a) }}
+                    <span class="entity-id">{{ pair.id_a }}</span>
+                  </span>
+                </div>
+                <span class="class-badge">{{ pair.class_a }}</span>
+              </td>
+              <td>
+                <div class="entity-name">
+                  <span class="entity-avatar">{{ displayName(pair.name_b).slice(0, 1).toUpperCase() }}</span>
+                  <span class="pair-label">
+                    {{ displayName(pair.name_b) }}
+                    <span class="entity-id">{{ pair.id_b }}</span>
+                  </span>
+                </div>
+                <span class="class-badge">{{ pair.class_b }}</span>
+              </td>
+              <td>
+                <span class="score-pill" [class.score-high]="pair.score >= 0.9" [class.score-medium]="pair.score < 0.9">
+                  {{ scorePercent(pair.score) }} %
+                </span>
+              </td>
+              <td class="pair-explanation">{{ pair.explanation }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <div class="state-card">
+        <span class="empty-state-icon" aria-hidden="true">◎</span>
+        <strong>Aucune paire redondante détectée</strong>
+        <p>
+          Aucune compétence ne dépasse le seuil de {{ appliedThreshold() * 100 }} % sur les
+          {{ totalCompetencies() }} compétences analysées. Abaissez le seuil pour élargir la recherche.
+        </p>
+      </div>
+    }
+  </div>
+</section>

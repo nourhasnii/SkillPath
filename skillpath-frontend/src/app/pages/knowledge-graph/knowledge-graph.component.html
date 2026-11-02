@@ -1,0 +1,156 @@
+<section class="knowledge-graph" aria-labelledby="kg-title">
+  <header class="page-head">
+    <div class="page-head-text">
+      <p class="sp-eyebrow">Semantic explorer</p>
+      <h1 id="kg-title">Knowledge graph</h1>
+      <p class="page-lede">
+        Explore how profiles, skills, occupations and trainings are actually connected in
+        SkillPath. Select any node to see why it matters and how it links to the rest.
+      </p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="sp-state" role="status">
+      <span class="sp-spinner" aria-hidden="true"></span>
+      <p>Loading the knowledge graph…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error() && counts().nodes === 0) {
+    <div class="sp-state">
+      <sp-icon name="graph" [size]="26" />
+      <p>No entity that your account is allowed to see was found.</p>
+    </div>
+  }
+
+  @if (counts().nodes > 0) {
+    <div class="graph-layout">
+      <section class="graph-panel" aria-label="Interactive knowledge graph">
+        <div class="graph-toolbar">
+          <form class="graph-search" role="search" (ngSubmit)="runSearch()">
+            <sp-icon name="search" [size]="16" />
+            <label class="sr-only" for="kg-search">Search an entity in the graph</label>
+            <input
+              id="kg-search"
+              name="kg-search"
+              type="search"
+              autocomplete="off"
+              placeholder="Search a skill, occupation or training…"
+              [value]="searchTerm()"
+              (input)="onSearchInput($any($event.target).value)" />
+            <button type="submit" class="sp-btn sp-btn-primary graph-search-submit">Find</button>
+          </form>
+
+          <div class="graph-zoom">
+            <button type="button" class="graph-tool" (click)="zoom(1)" aria-label="Zoom in">
+              <sp-icon name="zoomIn" [size]="17" />
+            </button>
+            <button type="button" class="graph-tool" (click)="zoom(-1)" aria-label="Zoom out">
+              <sp-icon name="zoomOut" [size]="17" />
+            </button>
+            <button type="button" class="graph-tool" (click)="zoomToFit()" aria-label="Zoom to fit">
+              <sp-icon name="fit" [size]="17" />
+            </button>
+            <span class="zoom-readout" aria-live="polite">{{ zoomLevel() }}%</span>
+            <button type="button" class="sp-btn sp-btn-ghost graph-reset" (click)="resetView()">
+              <sp-icon name="refresh" [size]="15" />
+              Reset view
+            </button>
+          </div>
+        </div>
+
+        <div class="graph-filters" role="group" aria-label="Filter by node type">
+          @for (type of typeOrder; track type) {
+            <button
+              type="button"
+              class="sp-chip"
+              [class.is-active]="visibleTypes()[type]"
+              [attr.aria-pressed]="visibleTypes()[type]"
+              (click)="toggleType(type)">
+              <span class="chip-swatch" [style.background]="typeMeta[type].color" aria-hidden="true"></span>
+              {{ typeMeta[type].label }}s
+            </button>
+          }
+          <span class="graph-count">{{ counts().nodes }} nodes · {{ counts().edges }} relations</span>
+        </div>
+
+        @if (searchFeedback()) {
+          <p class="search-feedback" role="status">{{ searchFeedback() }}</p>
+        }
+
+        <div
+          #networkHost
+          class="network-host"
+          role="application"
+          aria-label="Interactive graph of connected entities"></div>
+
+        <p class="graph-hint">
+          Drag to reposition, scroll to zoom, click a node for details. Distinct shapes and colours
+          mark each entity type.
+        </p>
+      </section>
+
+      <aside class="detail-panel" aria-label="Entity details">
+        @if (selected(); as detail) {
+          <div class="detail-head">
+            <span class="detail-type" [style.background]="typeMeta[detail.node.type].color">
+              <sp-icon [name]="typeMeta[detail.node.type].icon" [size]="14" />
+              {{ detail.typeLabel }}
+            </span>
+            <button type="button" class="detail-close" (click)="clearSelection()" aria-label="Close details">
+              <sp-icon name="close" [size]="16" />
+            </button>
+          </div>
+
+          <h2 class="detail-title">{{ displayName(detail.node.label) }}</h2>
+          <p class="detail-summary">{{ detail.summary }}</p>
+
+          @if (detail.node.type === 'skill') {
+            <p class="detail-status" [class.is-acquired]="isAcquired(detail.node)">
+              <sp-icon [name]="isAcquired(detail.node) ? 'check' : 'alert'" [size]="14" />
+              {{ isAcquired(detail.node) ? 'Declared as acquired in your profile' : 'Not declared as acquired in your profile' }}
+            </p>
+          }
+
+          @for (group of detail.groups; track group.relation + group.direction) {
+            <section class="detail-group">
+              <h3>{{ group.label }} <span>{{ group.items.length }}</span></h3>
+              <ul role="list">
+                @for (item of group.items; track item.id) {
+                  <li>
+                    <button type="button" (click)="focusNode(item.id)">
+                      <span class="relation-swatch" [style.background]="typeMeta[item.type].color" aria-hidden="true"></span>
+                      <span class="relation-name">{{ displayName(item.label) }}</span>
+                      <span class="relation-type">{{ typeMeta[item.type].label }}</span>
+                      <sp-icon name="arrowRight" [size]="14" />
+                    </button>
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+
+          @if (detail.groups.length === 0) {
+            <p class="detail-empty">
+              This entity has no relation to any other entity of a type your account can see.
+            </p>
+          }
+        } @else {
+          <div class="detail-placeholder">
+            <sp-icon name="graph" [size]="26" />
+            <h2>No entity selected</h2>
+            <p>
+              Click a node in the graph — or search for one — to see its type, what is known
+              about it, and everything it connects to.
+            </p>
+          </div>
+        }
+      </aside>
+    </div>
+  }
+</section>

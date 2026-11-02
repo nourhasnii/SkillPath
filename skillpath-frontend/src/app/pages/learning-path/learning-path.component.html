@@ -1,0 +1,79 @@
+<section class="learning-path-page">
+  <header class="page-head">
+    <div>
+      <p class="sp-eyebrow">Career intelligence</p>
+      <h1>Personalised Learning Path</h1>
+      <p class="page-lede">
+        A single step-by-step plan based on your acquired skills, target occupation and the catalogue prerequisites.
+      </p>
+    </div>
+    @if (report()) {
+      <button class="sp-btn sp-btn-secondary" type="button" (click)="refresh()" [disabled]="loading()">
+        <sp-icon name="refresh" [size]="16" /> Refresh path
+      </button>
+    }
+  </header>
+
+  <sp-career-selector (preselected)="onPreselected($event)" (submitted)="onSubmitted($event)" />
+
+  @if (loading()) {
+    <div class="sp-state" role="status"><span class="sp-spinner"></span><p>Building your personalised path…</p></div>
+  }
+  @if (error()) { <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p> }
+  @if (actionError()) { <p class="sp-alert sp-alert-error" role="alert">{{ actionError() }}</p> }
+  @if (actionMessage()) { <p class="sp-alert sp-alert-success" role="status">{{ actionMessage() }}</p> }
+
+  @if (report(); as data) {
+    <section class="path-summary" aria-label="Path overview">
+      <article><span>Target occupation</span><strong>{{ courseName(data.metier) }}</strong></article>
+      <article><span>Required skills</span><strong>{{ data.competences_requises.length }}</strong></article>
+      <article><span>Mastered skills</span><strong>{{ data.competences_acquises.length }}</strong></article>
+      <article><span>Recommended trainings</span><strong>{{ steps().length }}</strong></article>
+    </section>
+
+    @if (missingSkills()) {
+      <p class="sp-alert sp-alert-info">Not covered by the current catalogue: {{ missingSkills() }}</p>
+    }
+    @if (data.etapes.length === 0 && data.competences_manquantes.length === 0) {
+      <div class="sp-state"><sp-icon name="check" [size]="24" /><p>Your profile already has every required skill.</p></div>
+    } @else if (data.etapes.length === 0) {
+      <div class="sp-state"><sp-icon name="path" [size]="24" /><p>No prerequisite-valid training is currently available for the missing skills.</p></div>
+    } @else {
+      <section class="roadmap" aria-labelledby="legacy-roadmap-title">
+        <div class="section-head">
+          <div><h2 id="legacy-roadmap-title">Your recommended sequence</h2><p>One personalized path, with prerequisites kept in order.</p></div>
+          <button type="button" class="sp-btn sp-btn-primary" (click)="save()" [disabled]="saving() || !!effectivePathId()">
+            {{ saving() ? 'Saving…' : effectivePathId() ? 'Saved to profile' : 'Save this path' }}
+          </button>
+        </div>
+        <ol class="step-list">
+          @for (step of steps(); track step.formation; let index = $index) {
+            <li class="step-card">
+              <span class="step-number">{{ step.ordre }}</span>
+              <div class="step-main">
+                <div class="step-title"><h3>{{ courseName(step.label) }}</h3><span>{{ step.duree_heures !== null ? step.duree_heures + ' h' : 'Duration unavailable' }}</span></div>
+                @if (step.competences_couvertes.length) {
+                  <p><strong>Covers:</strong> {{ skillsLabel(step.competences_couvertes) }}</p>
+                }
+                @if (step.prerequis.length) {
+                  <p><strong>Prerequisites:</strong> {{ skillsLabel(step.prerequis) }}</p>
+                }
+                <div class="step-actions">
+                  <button type="button" class="reorder" (click)="move(index, -1)" [disabled]="!canMove(index, -1)" aria-label="Move training earlier">↑</button>
+                  <button type="button" class="reorder" (click)="move(index, 1)" [disabled]="!canMove(index, 1)" aria-label="Move training later">↓</button>
+                  @if (effectivePathId()) {
+                    <button type="button" class="sp-btn sp-btn-ghost" (click)="toggleProgress(step)" [disabled]="savingProgress()">
+                      {{ isCompleted(step) ? 'Mark not completed' : 'Mark completed' }}
+                    </button>
+                  }
+                </div>
+              </div>
+            </li>
+          }
+        </ol>
+      </section>
+    }
+  } @else if (!loading() && !error()) {
+    <div class="sp-state"><sp-icon name="path" [size]="24" /><p>Select a profile and target occupation to build your learning path.</p></div>
+  }
+</section>

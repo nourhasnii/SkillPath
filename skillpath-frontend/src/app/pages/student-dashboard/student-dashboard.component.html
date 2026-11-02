@@ -1,0 +1,440 @@
+<section class="student-dashboard" aria-labelledby="student-dash-title">
+  <!-- A. Welcome header ------------------------------------------------ -->
+  <header class="sp-hero sd-hero">
+    <div class="sp-hero-identity">
+      <span class="sp-avatar" aria-hidden="true">{{ initials() }}</span>
+      <div class="sp-hero-copy">
+        <div class="sp-hero-eyebrow">
+          <span class="sp-badge sp-badge-violet"><sp-icon name="graduation" [size]="12" /> Student</span>
+          @if (level(); as lvl) {
+            <span [class]="levelBadgeClass()" title="Overall readiness level">
+              <sp-icon name="trend" [size]="12" /> {{ levelText() }}
+            </span>
+          }
+          @if (targetLabel()) {
+            <span class="hero-target"><sp-icon name="target" [size]="13" /> Target · <strong>{{ targetLabel() }}</strong></span>
+          }
+        </div>
+        <h1 id="student-dash-title">{{ greeting() }}</h1>
+        <p class="sp-hero-sub">
+          Learn. Improve. Discover your future — keep building the skills that bring you closer to
+          <strong>{{ targetLabel() || 'your next role' }}</strong>.
+        </p>
+      </div>
+    </div>
+    <div class="sp-hero-actions">
+      <a routerLink="/account/profile" class="sp-btn sp-btn-secondary">
+        <sp-icon name="user" [size]="16" /> Edit profile
+      </a>
+    </div>
+  </header>
+
+  <div class="sd-selector">
+    <sp-career-selector (preselected)="onPreselected($event)" (submitted)="onSubmitted($event)" />
+  </div>
+  <sp-recommended-for-you />
+
+  <!-- Loading skeleton ------------------------------------------------ -->
+  @if (loading()) {
+    <div class="sp-skeleton-stack" role="status" aria-label="Preparing your learning workspace">
+      <div class="sp-skeleton sp-skeleton-hero"></div>
+      <div class="sd-layout">
+        <div class="sp-skeleton sp-skeleton-block span-7"></div>
+        <div class="sp-skeleton sp-skeleton-block span-5"></div>
+        <div class="sp-skeleton sp-skeleton-block span-12"></div>
+      </div>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error() && !gap()) {
+    <div class="sp-empty" role="status">
+      <sp-icon name="graduation" [size]="22" />
+      <div>
+        <strong>Your dashboard is waiting for a target occupation</strong>
+        <p>Select your profile and target occupation above to build your readiness, skills and learning roadmap.</p>
+      </div>
+    </div>
+  }
+
+  @if (gap(); as report) {
+    <div class="sd-layout">
+      <!-- B. Career readiness overview --------------------------------- -->
+      <section class="sp-card sp-card-pad readiness-card span-7" aria-labelledby="readiness-title">
+        <div class="sp-card-heading">
+          <div>
+            <p class="sp-eyebrow">Career readiness</p>
+            <h2 id="readiness-title">Your readiness for {{ targetLabel() || 'your target role' }}</h2>
+            <p>{{ matchDescription() }}</p>
+          </div>
+          <span [class]="badgeClass()">{{ readinessLabel() }}</span>
+        </div>
+
+        <div class="readiness-body">
+          <sp-ring-chart
+            [value]="report.match_score"
+            [tone]="matchTone()"
+            [size]="156"
+            [thickness]="13"
+            caption="Readiness"
+            [accessibleLabel]="'Career readiness for ' + targetLabel() + ': ' + report.match_score + '%'" />
+
+          <div class="readiness-stats">
+            <div class="rs-item">
+              <span class="rs-value">{{ requiredCount() }}</span>
+              <span class="rs-label">Required skills</span>
+            </div>
+            <div class="rs-item rs-mastered">
+              <span class="rs-value">{{ masteredCount() }}</span>
+              <span class="rs-label">Mastered</span>
+            </div>
+            <div class="rs-item rs-progress">
+              <span class="rs-value">{{ inProgressCount() }}</span>
+              <span class="rs-label">In progress</span>
+            </div>
+            <div class="rs-item rs-missing">
+              <span class="rs-value">{{ missingCount() }}</span>
+              <span class="rs-label">Missing</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="readiness-foot">
+          <a routerLink="/skill-gap" class="sp-btn sp-btn-primary">
+            Explore my skill gaps <sp-icon name="arrowRight" [size]="16" />
+          </a>
+          @if (targetLabel()) {
+            <p class="readiness-target"><sp-icon name="target" [size]="14" /> Target role · <strong>{{ targetLabel() }}</strong></p>
+          }
+        </div>
+
+        <sp-level-compare [level]="level()" [requiredLevel]="requiredLevel()" />
+      </section>
+
+      <!-- Skills breakdown ------------------------------------------- -->
+      <section class="sp-card sp-card-pad span-5" aria-labelledby="breakdown-title">
+        <div class="sp-card-heading">
+          <div>
+            <h2 id="breakdown-title">Skills breakdown</h2>
+            <p>Every required skill of your target role, grouped by status.</p>
+          </div>
+        </div>
+        @if (distribution().length) {
+          <sp-distribution-chart
+            [segments]="distribution()"
+            [size]="168"
+            [thickness]="15"
+            [accessibleLabel]="'Skills breakdown: ' + masteredCount() + ' mastered, ' + inProgressCount() + ' in progress, ' + missingCount() + ' missing'" />
+        } @else {
+          <div class="sp-empty">
+            <sp-icon name="alert" [size]="20" />
+            <div>
+              <strong>No required skills declared</strong>
+              <p>No skills are listed for this occupation yet, so there is nothing to break down.</p>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- C. Continue learning ----------------------------------------- -->
+      <section class="sp-section learning-section span-12" aria-labelledby="continue-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="continue-title">Continue learning</h2>
+            <p>Your next recommended trainings, in prerequisite order.</p>
+          </div>
+          <a routerLink="/learning-path" class="sp-btn sp-btn-ghost">
+            View full path <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        </div>
+
+        @if (upcomingCourses().length) {
+          <div class="course-grid">
+            @for (step of upcomingCourses(); track step.formation) {
+              <article class="course-card">
+                <div class="course-thumb">
+                  <sp-course-cover [courseId]="step.formation" [courseType]="step.type" />
+                  <span class="course-format">{{ getFormat(step.type) }}</span>
+                  <span class="course-status">Up next</span>
+                </div>
+                <div class="course-body">
+                  <h3>{{ displayName(step.label || step.formation) }}</h3>
+                  <div class="course-meta">
+                    <span><sp-icon name="clock" [size]="13" /> {{ step.duree_heures ? step.duree_heures + 'h' : 'Duration n/a' }}</span>
+                    <span><sp-icon name="layers" [size]="13" /> {{ phaseLabel(step.phase) }}</span>
+                  </div>
+                  @if (coveredLabel(step)) {
+                    <p class="course-covers">{{ coveredLabel(step) }}</p>
+                  }
+                  <a routerLink="/learning-path" class="sp-btn sp-btn-secondary sp-btn-block">
+                    Continue <sp-icon name="arrowRight" [size]="15" />
+                  </a>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="sp-empty">
+            <sp-icon name="check" [size]="22" />
+            <div>
+              <strong>You have completed every recommended course</strong>
+              <p>There is no pending training for this occupation. Explore the catalogue to keep growing.</p>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- D. My skills & competencies ---------------------------------- -->
+      <section class="sp-section skills-section span-12" aria-labelledby="skills-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="skills-title">My skills</h2>
+            <p>What you have mastered, what is in progress and what is still missing.</p>
+          </div>
+          <a routerLink="/skill-gap" class="sp-btn sp-btn-ghost">
+            Full analysis <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        </div>
+
+        @if (hasSkills()) {
+          <div class="skill-groups">
+            @for (group of skillGroups(); track group.key) {
+              <article class="skill-group" [class]="'skill-group is-' + group.key">
+                <header class="skill-group-head">
+                  <span class="skill-dot" aria-hidden="true"></span>
+                  <div>
+                    <h3>{{ group.label }} <span class="skill-count">{{ group.items.length }}</span></h3>
+                    <p>{{ group.description }}</p>
+                  </div>
+                </header>
+                <div class="skill-tags">
+                  @for (skill of group.items; track skill.id) {
+                    <button
+                      type="button"
+                      class="sp-skill-tag"
+                      [class]="'sp-skill-tag is-' + skill.statut"
+                      (click)="openInGraph(skill.label || skill.id)">
+                      <i aria-hidden="true"></i>{{ displayName(skill.label || skill.id) }}
+                    </button>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="sp-empty">
+            <sp-icon name="sparkle" [size]="22" />
+            <div>
+              <strong>No skill data yet</strong>
+              <p>Add the skills you already have in your profile so the analysis can place them here.</p>
+              <a routerLink="/account/profile" class="sp-btn sp-btn-secondary empty-action">Complete my profile</a>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- E. Personalized learning roadmap ---------------------------- -->
+      <section class="sp-section roadmap-section span-8" aria-labelledby="roadmap-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="roadmap-title">Personalised learning roadmap</h2>
+            <p>Completed, current and upcoming steps in prerequisite order.</p>
+          </div>
+          <a routerLink="/learning-path" class="sp-btn sp-btn-ghost">
+            Open path <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        </div>
+
+        @if (roadmap().length) {
+          <ol class="roadmap">
+            @for (entry of roadmap(); track entry.step.formation) {
+              <li class="roadmap-step" [class]="'roadmap-step is-' + entry.state">
+                <span class="roadmap-marker" aria-hidden="true">
+                  @if (entry.state === 'done') {
+                    <sp-icon name="check" [size]="13" />
+                  } @else {
+                    <span class="roadmap-index">{{ entry.step.ordre }}</span>
+                  }
+                </span>
+                <div class="roadmap-card">
+                  <div class="roadmap-card-head">
+                    <h3>{{ displayName(entry.step.label || entry.step.formation) }}</h3>
+                    <span class="sp-badge sp-badge-neutral">{{ phaseLabel(entry.step.phase) }}</span>
+                  </div>
+                  <div class="roadmap-meta">
+                    <span><sp-icon name="layers" [size]="13" /> {{ getFormat(entry.step.type) }}</span>
+                    <span><sp-icon name="clock" [size]="13" /> {{ entry.step.duree_heures ? entry.step.duree_heures + 'h' : 'Duration n/a' }}</span>
+                    @if (entry.state === 'done') {
+                      <span class="roadmap-flag is-done"><sp-icon name="check" [size]="12" /> Completed</span>
+                    } @else if (entry.state === 'current') {
+                      <span class="roadmap-flag is-current"><sp-icon name="sparkle" [size]="12" /> Up next</span>
+                    }
+                  </div>
+                  @if (entry.step.prerequis.length) {
+                    <p class="roadmap-prereq">
+                      <sp-icon name="branch" [size]="13" /> Prerequisites · {{ prereqText(entry.step) }}
+                    </p>
+                  }
+                </div>
+              </li>
+            }
+          </ol>
+        } @else {
+          <div class="sp-empty">
+            <sp-icon name="path" [size]="22" />
+            <div>
+              <strong>No learning path generated yet</strong>
+              <p>The roadmap fills up as soon as trainings covering your missing skills exist in the catalogue.</p>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- Sidebar: progress + knowledge graph -------------------------- -->
+      <aside class="sd-aside span-4">
+        <article class="sp-card sp-card-pad" aria-labelledby="progress-title">
+          <div class="sp-card-heading">
+            <div>
+              <h2 id="progress-title">Learning progress</h2>
+              <p>Your advancement through the roadmap.</p>
+            </div>
+          </div>
+          <div class="progress-row">
+            <sp-ring-chart
+              [value]="progressPercent()"
+              tone="violet"
+              [size]="112"
+              [thickness]="10"
+              [accessibleLabel]="'Path progress: ' + progressPercent() + '%'" />
+            <ul class="progress-stats">
+              <li><strong>{{ completedCount() }}</strong><span>Completed</span></li>
+              <li><strong>{{ remainingCount() }}</strong><span>Remaining</span></li>
+              <li><strong>{{ remainingText() }}</strong><span>Estimated left</span></li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="sp-card sp-card-pad graph-card" aria-labelledby="graph-title">
+          <div class="sp-card-heading">
+            <div>
+              <h2 id="graph-title">Knowledge graph</h2>
+              <p>How your profile connects to skills and roles.</p>
+            </div>
+            <a routerLink="/knowledge-graph" class="icon-btn" aria-label="Explore the knowledge graph">
+              <sp-icon name="external" [size]="16" />
+            </a>
+          </div>
+          <div class="graph-preview">
+            @if (preview(); as p) {
+              <svg [attr.viewBox]="'0 0 ' + previewWidth + ' ' + previewHeight" class="graph-svg" role="img" aria-label="Preview of your connections in the knowledge graph">
+                @for (node of p.nodes; track node.node.id) {
+                  <line [attr.x1]="p.focus.x" [attr.y1]="p.focus.y" [attr.x2]="node.x" [attr.y2]="node.y" class="graph-edge" />
+                }
+                @for (node of p.nodes; track node.node.id) {
+                  <circle
+                    [attr.cx]="node.x"
+                    [attr.cy]="node.y"
+                    [attr.r]="previewRadius[node.node.type]"
+                    [attr.fill]="previewColors[node.node.type]"
+                    class="graph-node"
+                    (click)="openInGraph(node.node.label)">
+                    <title>{{ displayName(node.node.label) }}</title>
+                  </circle>
+                }
+                <circle
+                  [attr.cx]="p.focus.x"
+                  [attr.cy]="p.focus.y"
+                  [attr.r]="previewRadius.profile"
+                  [attr.fill]="previewColors.profile"
+                  class="graph-focus">
+                  <title>You</title>
+                </circle>
+              </svg>
+              <p class="graph-meta">{{ p.total }} connected entities</p>
+            } @else {
+              <div class="graph-placeholder">
+                <sp-icon name="graph" [size]="30" />
+                <p>No connections found yet.</p>
+              </div>
+            }
+          </div>
+        </article>
+      </aside>
+
+      <!-- F. Recommended career opportunities -------------------------- -->
+      <section class="sp-section opportunities-section span-12" aria-labelledby="opportunities-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="opportunities-title">Recommended career opportunities</h2>
+            <p>Occupations genuinely reachable with your current profile.</p>
+          </div>
+        </div>
+
+        @if (accessibleJobs().length) {
+          <div class="opportunity-grid">
+            @for (job of accessibleJobs(); track job) {
+              <article class="opportunity-card">
+                <span class="opportunity-icon" aria-hidden="true"><sp-icon name="target" [size]="18" /></span>
+                <div class="opportunity-copy">
+                  <h3>{{ displayName(job) }}</h3>
+                  <p>Accessible with the skills already recorded in your profile.</p>
+                </div>
+                <button type="button" class="sp-btn sp-btn-secondary opportunity-action" (click)="openInGraph(job)">
+                  View details <sp-icon name="arrowRight" [size]="15" />
+                </button>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="sp-empty">
+            <sp-icon name="alert" [size]="22" />
+            <div>
+              <strong>No additional accessible occupations yet</strong>
+              <p>Complete your current learning path to unlock new career opportunities.</p>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- G. Quick actions -------------------------------------------- -->
+      <section class="sp-section actions-section span-12" aria-labelledby="actions-title">
+        <div class="sp-section-head">
+          <div>
+            <h2 id="actions-title">Quick actions</h2>
+            <p>Jump straight into the tools that move your career forward.</p>
+          </div>
+        </div>
+        <div class="sp-quick-grid">
+          <a routerLink="/skill-gap" class="sp-quick-card">
+            <span class="sp-quick-icon"><sp-icon name="target" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Analyze my skills</strong><span>See your gaps against the target role.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+          <a routerLink="/learning-path" class="sp-quick-card">
+            <span class="sp-quick-icon tone-cyan"><sp-icon name="path" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Explore my learning path</strong><span>Follow your prerequisite-ordered roadmap.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+          <a routerLink="/catalogue" class="sp-quick-card">
+            <span class="sp-quick-icon tone-amber"><sp-icon name="book" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Browse formations</strong><span>Discover real trainings and what they teach.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+          <a routerLink="/knowledge-graph" class="sp-quick-card">
+            <span class="sp-quick-icon tone-emerald"><sp-icon name="graph" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Explore knowledge graph</strong><span>See how every result connects.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+          <a routerLink="/semantic-assistant" class="sp-quick-card">
+            <span class="sp-quick-icon tone-rose"><sp-icon name="sparkle" [size]="20" /></span>
+            <span class="sp-quick-copy"><strong>Open semantic assistant</strong><span>Ask a plain-language career question.</span></span>
+            <sp-icon name="arrowRight" [size]="16" class="quick-arrow" />
+          </a>
+        </div>
+      </section>
+    </div>
+  }
+</section>

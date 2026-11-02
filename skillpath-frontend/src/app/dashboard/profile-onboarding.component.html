@@ -1,0 +1,199 @@
+<div class="dashboard-shell">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/" aria-label="SkillPath home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>skillpath<span class="brand-period">.</span></span>
+    </a>
+    <nav class="side-navigation" aria-label="Personal navigation">
+      <div class="nav-group">
+        <p>WORKSPACE</p>
+        <a [routerLink]="role() === 'STUDENT' ? '/student/dashboard' : '/professional/dashboard'">
+          <span class="nav-icon">⌂</span> Home
+        </a>
+        <a [routerLink]="role() === 'STUDENT' ? '/student/onboarding' : '/professional/onboarding'" class="active">
+          <span class="nav-icon">◎</span> Onboarding
+        </a>
+      </div>
+      <div class="nav-group">
+        <p>CAREER TOOLS</p>
+        <a routerLink="/skill-gap"><span class="nav-icon">⌁</span> Skill Gap</a>
+        <a routerLink="/learning-path"><span class="nav-icon">→</span> Learning Path</a>
+        <a routerLink="/knowledge-graph"><span class="nav-icon">◈</span> Knowledge Graph</a>
+      </div>
+    </nav>
+    <button class="back-home" type="button" (click)="gotoDashboard()">
+      <span aria-hidden="true">←</span> Back to workspace
+    </button>
+  </aside>
+
+  <main class="dashboard-main">
+    <header class="topbar">
+      <div class="breadcrumb"><span>SkillPath</span><i>/</i><strong>Profile setup</strong></div>
+      <span class="workspace-badge"><span></span> {{ role() }}</span>
+    </header>
+
+    <div class="dashboard-content">
+      <section class="page-heading onboarding-heading">
+        <div>
+          <p class="eyebrow">{{ role() === 'STUDENT' ? 'STUDENT PROFILE' : 'PROFESSIONAL PROFILE' }}</p>
+          <h1>{{ stepTitle() }}</h1>
+          <p class="page-description">{{ stepDescription() }}</p>
+        </div>
+        <div class="onboarding-stepper" aria-label="Profile completion steps">
+          @for (step of steps; track step; let i = $index) {
+            <span class="step-dot" [class.active]="stepIndex() === i" [class.done]="stepIndex() > i" [attr.aria-current]="stepIndex() === i ? 'step' : null">
+              {{ i + 1 }}
+            </span>
+          }
+        </div>
+      </section>
+
+      @if (errorMessage()) {
+        <div class="auth-alert auth-error" role="alert">{{ errorMessage() }}</div>
+      }
+
+      @if (loading()) {
+        <div class="form-card profile-loading" role="status">Loading your profile and available skills…</div>
+      } @else {
+        <form class="form-card account-profile-form" (ngSubmit)="saveProfile()">
+          @switch (stepIndex()) {
+            @case (0) {
+              <section class="profile-form-section">
+                <div class="profile-section-heading">
+                  <span class="profile-section-icon">01</span>
+                  <div>
+                    <h2>Personal information</h2>
+                    <p>Use the details tied to your account and add the information needed for your next step.</p>
+                  </div>
+                </div>
+                <div class="profile-field-grid">
+                  <label class="profile-field full-span">
+                    <span>Full name</span>
+                    <input name="fullName" [ngModel]="fullName()" (ngModelChange)="fullName.set($event)" required minlength="2" maxlength="120">
+                    @if (validationErrors()?.fullName) {
+                      <small class="field-error">{{ validationErrors().fullName }}</small>
+                    }
+                  </label>
+                  @if (role() === 'PROFESSIONAL') {
+                    <label class="profile-field full-span">
+                      <span>Professional background</span>
+                      <textarea name="experience" [ngModel]="experience()" (ngModelChange)="experience.set($event)" rows="4" maxlength="5000" aria-required="true" placeholder="Share the background, sectors, and experience that matter for your next role."></textarea>
+                      @if (validationErrors()?.experience) {
+                        <small class="field-error">{{ validationErrors().experience }}</small>
+                      }
+                    </label>
+                  }
+                </div>
+              </section>
+            }
+            @case (1) {
+              <section class="profile-form-section">
+                <div class="profile-section-heading">
+                  <span class="profile-section-icon">02</span>
+                  <div>
+                    <h2>Existing skills</h2>
+                    <p>Select the skills you already bring to the table. You can add or remove them later.</p>
+                  </div>
+                </div>
+                @if (competences().length) {
+                  <div class="profile-choice-list">
+                    @for (competence of competences(); track competence.id) {
+                      <label class="profile-choice">
+                        <input
+                          type="checkbox"
+                          [checked]="isSelectedCompetence(competence.id)"
+                          (change)="toggleCompetence(competence.id, $any($event.target).checked)"
+                        >
+                        <span>{{ competence.label }}</span>
+                      </label>
+                    }
+                  </div>
+                  @if (validationErrors()?.competencies) {
+                    <small class="field-error" style="display: block; margin-top: 12px;">{{ validationErrors().competencies }}</small>
+                  }
+                } @else {
+                  <p class="profile-empty-options">Skill data is not available yet.</p>
+                }
+              </section>
+            }
+            @case (2) {
+              <section class="profile-form-section">
+                <div class="profile-section-heading">
+                  <span class="profile-section-icon">03</span>
+                  <div>
+                    <h2>Career goal</h2>
+                    <p>Choose the profession you want to move toward and use it to unlock personalized guidance.</p>
+                  </div>
+                </div>
+                <label class="profile-field">
+                  <span>Target profession</span>
+                  <select name="targetOccupation" [ngModel]="targetOccupation()" (ngModelChange)="targetOccupation.set($event)">
+                    <option value="">Select one</option>
+                    @for (occupation of occupations(); track occupation.id) {
+                      <option [value]="occupation.id">{{ occupation.label }}</option>
+                    }
+                  </select>
+                  @if (validationErrors()?.targetOccupation) {
+                    <small class="field-error">{{ validationErrors().targetOccupation }}</small>
+                  }
+                </label>
+              </section>
+            }
+            @default {
+              <section class="profile-form-section">
+                <div class="profile-section-heading">
+                  <span class="profile-section-icon">04</span>
+                  <div>
+                    <h2>Review and confirm</h2>
+                    <p>Check the details before saving and continuing to your personalized workspace.</p>
+                  </div>
+                </div>
+                <div class="onboarding-review">
+                  <div class="review-item">
+                    <span>Full name</span>
+                    <strong>{{ fullName() || 'Not provided' }}</strong>
+                  </div>
+                  <div class="review-item">
+                    <span>Target profession</span>
+                    <strong>{{ selectedOccupationLabel() }}</strong>
+                  </div>
+                  @if (role() === 'PROFESSIONAL') {
+                    <div class="review-item">
+                      <span>Experience</span>
+                      <strong>{{ experience() || 'Not provided' }}</strong>
+                    </div>
+                  }
+                  <div class="review-item review-wide">
+                    <span>Selected skills</span>
+                    <strong>
+                      @if (acquiredCompetences().length) {
+                        {{ competences().filter(item => acquiredCompetences().includes(item.id)).map(item => item.label).join(', ') }}
+                      } @else {
+                        No skills selected yet
+                      }
+                    </strong>
+                  </div>
+                </div>
+              </section>
+            }
+          }
+
+          <footer class="profile-form-actions">
+            <button type="button" class="button-secondary" (click)="stepIndex() === 0 ? gotoDashboard() : previousStep()">
+              {{ stepIndex() === 0 ? 'Cancel' : 'Back' }}
+            </button>
+            @if (stepIndex() < steps.length - 1) {
+              <button type="button" class="button-primary" [disabled]="submitting()" (click)="nextStep()">
+                Continue
+              </button>
+            } @else {
+              <button type="submit" class="button-primary" [disabled]="submitting()">
+                {{ submitting() ? 'Saving…' : 'Confirm profile' }}
+              </button>
+            }
+          </footer>
+        </form>
+      }
+    </div>
+  </main>
+</div>

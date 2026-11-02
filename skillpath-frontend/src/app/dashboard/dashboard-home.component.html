@@ -1,0 +1,67 @@
+<section class="dashboard-page">
+  <header class="home-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">OVERVIEW</p>
+      <h1>{{ greeting() }}, {{ adminName() }}</h1>
+      <p class="page-description">
+        Monitor your semantic knowledge repository and manage the SkillPath ecosystem.
+      </p>
+    </div>
+    <span [class]="'repo-status repo-status--' + repositoryStatus()" role="status">
+      <i aria-hidden="true"></i>
+      {{ statusLabel() }}
+    </span>
+  </header>
+
+  @if (loading()) {
+    <div class="kpi-grid" aria-label="Loading statistics" role="status">
+      @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+        <div class="kpi-card skeleton-card"><span></span><i></i></div>
+      }
+    </div>
+  } @else if (errorMessage()) {
+    <div class="state-card error-state" role="alert">
+      <strong>Statistics unavailable</strong>
+      <p>{{ errorMessage() }}</p>
+      <button class="button-secondary" type="button" (click)="retry()">Retry</button>
+    </div>
+  } @else {
+    <div class="kpi-grid">
+      @for (kpi of kpis(); track kpi.path) {
+        <a class="kpi-card kpi-link" [routerLink]="kpi.path">
+          <span [class]="'kpi-icon ' + kpi.tone" aria-hidden="true">
+            <sp-icon [name]="kpi.icon" [size]="17" />
+          </span>
+          <p>{{ kpi.label }}</p>
+          <strong>{{ kpi.value }}</strong>
+          <span class="kpi-detail">{{ kpi.detail }}</span>
+          <span class="kpi-go" aria-hidden="true"><sp-icon name="arrowRight" [size]="15" /></span>
+        </a>
+      }
+    </div>
+  }
+
+  <section class="quick-section">
+    <div class="section-title">
+      <div>
+        <p class="eyebrow">SHORTCUTS</p>
+        <h2>Quick Actions</h2>
+        <p class="section-description">Jump straight to the management screens you use most.</p>
+      </div>
+    </div>
+    <div class="quick-actions">
+      @for (action of quickActions; track action.path) {
+        <a class="quick-action" [routerLink]="action.path">
+          <span class="quick-icon" aria-hidden="true"><sp-icon [name]="action.icon" [size]="17" /></span>
+          <span class="quick-copy">
+            <strong>{{ action.label }}</strong>
+            <small>{{ action.detail }}</small>
+          </span>
+          <span class="quick-go" aria-hidden="true"><sp-icon name="arrowRight" [size]="15" /></span>
+        </a>
+      }
+    </div>
+  </section>
+
+  <sp-knowledge-analytics />
+</section>

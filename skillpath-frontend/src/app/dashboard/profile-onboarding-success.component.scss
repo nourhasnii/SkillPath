@@ -1,0 +1,30 @@
+.success-card {
+  max-width: 700px;
+  margin: 80px auto 0;
+  padding: 48px 32px;
+  text-align: center;
+}
+
+.success-icon {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f0efff;
+  color: #5b4fe9;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.success-card h1 {
+  margin: 10px 0 24px;
+  color: #0f172a;
+  font-size: clamp(28px, 3vw, 42px);
+  letter-spacing: -1px;
+}
+
+.success-button {
+  min-width: 220px;
+}

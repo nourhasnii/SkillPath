@@ -1,0 +1,30 @@
+.analysis-summary {
+  margin: 0 0 16px;
+}
+
+.analysis-count {
+  display: inline-grid;
+  min-width: 34px;
+  min-height: 30px;
+  place-items: center;
+  padding: 0 9px;
+  border-radius: 999px;
+  color: #4a3fd6;
+  background: #f0efff;
+  font-weight: 700;
+}
+
+.analysis-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.analysis-list li {
+  padding-left: 2px;
+}
+
+.analysis-list .entity-id {
+  margin-left: 6px;
+}

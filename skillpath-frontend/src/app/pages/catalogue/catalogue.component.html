@@ -1,0 +1,156 @@
+<section class="catalogue-page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">LEARNING RESOURCES</p>
+      <h1>Training catalogue</h1>
+      <p class="page-lede">Browse trainings from the SkillPath catalogue and see the skills they teach.</p>
+    </div>
+  </header>
+
+  @if (toast()) {
+    <p class="success-toast" role="status" aria-live="polite">{{ toast() }}</p>
+  }
+
+  <div class="catalogue-layout">
+    <section class="catalogue-list-card" aria-label="Training catalogue">
+      <div class="catalogue-controls">
+        <label class="search-field">
+          <span class="sr-only">Search trainings by name</span>
+          <input type="search" placeholder="Search trainings…" (input)="onSearchInput($event)">
+        </label>
+        <label class="filter-field">
+          <span class="sr-only">Filter by training type</span>
+          <select [value]="typeFilter()" (change)="onTypeChange($event)">
+            <option value="all">All types</option>
+            <option value="online">Online</option>
+            <option value="onsite">On-site</option>
+          </select>
+        </label>
+      </div>
+
+      @if (loading()) {
+        <div class="catalogue-state" role="status">Loading trainings…</div>
+      } @else if (error()) {
+        <div class="catalogue-state error-state" role="alert">{{ error() }}</div>
+      } @else if (trainings().length === 0) {
+        <div class="catalogue-state">No trainings are available in the catalogue.</div>
+      } @else {
+        <p class="result-count">{{ filteredTrainings().length }} training{{ filteredTrainings().length === 1 ? '' : 's' }}</p>
+        @if (filteredTrainings().length === 0) {
+          <div class="catalogue-state">No trainings match your search and type filter.</div>
+        } @else {
+          <ul class="training-list">
+            @for (training of filteredTrainings(); track training.id) {
+              <li>
+                <a
+                  class="training-row"
+                  [routerLink]="['/catalogue', training.id]"
+                  [class.is-selected]="selectedId() === training.id"
+                  [attr.aria-current]="selectedId() === training.id ? 'page' : null">
+                  <span class="training-copy">
+                    <strong>{{ humanize(training.nom) }}</strong>
+                    <small>{{ trainingType(training) }}@if (training.duree_heures !== null) { · {{ training.duree_heures }} h }</small>
+                  </span>
+                  <span class="row-arrow" aria-hidden="true">↗</span>
+                </a>
+              </li>
+            }
+          </ul>
+          }
+      }
+    </section>
+
+    <section class="training-detail-card" aria-label="Training details">
+      @if (!selectedId()) {
+        <div class="detail-empty">
+          <span class="detail-mark" aria-hidden="true">↗</span>
+          <h2>Select a training</h2>
+          <p>Choose an item from the catalogue to view its skills, prerequisites, and modules.</p>
+        </div>
+      } @else if (detailLoading()) {
+        <div class="catalogue-state" role="status">Loading training details…</div>
+      } @else if (detailError()) {
+        <div class="catalogue-state error-state" role="alert">{{ detailError() }}</div>
+      } @else if (selectedTraining(); as training) {
+        <div class="detail-heading">
+          <div>
+            <p class="eyebrow">{{ trainingType(training) }}</p>
+            <h2>{{ humanize(training.nom) }}</h2>
+          </div>
+          @if (training.duree_heures !== null) {
+            <span class="duration-badge">{{ training.duree_heures }} h</span>
+          }
+        </div>
+
+        <section class="detail-section">
+          <h3>Skills taught</h3>
+          @if (training.competences_enseignees.length) {
+            <div class="chip-list">
+              @for (competence of training.competences_enseignees; track competence.id) {
+                <span class="skill-chip">{{ humanize(competence.label) }}</span>
+              }
+            </div>
+          } @else {
+            <p class="muted-copy">No taught skills are recorded for this training.</p>
+          }
+        </section>
+
+        <section class="detail-section">
+          <h3>Prerequisites</h3>
+          @if (training.prerequis.length) {
+            <ul class="linked-list">
+              @for (prerequisite of training.prerequis; track prerequisite.id) {
+                <li><a [routerLink]="['/catalogue', prerequisite.id]">{{ humanize(prerequisite.label) }} <span aria-hidden="true">↗</span></a></li>
+              }
+            </ul>
+          } @else {
+            <p class="muted-copy">No prerequisites are recorded.</p>
+          }
+        </section>
+
+        <section class="detail-section">
+          <h3>Modules</h3>
+          @if (modules().length) {
+            <div class="module-list">
+              @for (module of modules(); track module.id) {
+                <article class="module-card">
+                  <h4>{{ humanize(module.nom) }}</h4>
+                  @if (module.competences_enseignees.length) {
+                    <div class="chip-list">
+                      @for (competence of module.competences_enseignees; track competence.id) {
+                        <span class="skill-chip">{{ humanize(competence.label) }}</span>
+                      }
+                    </div>
+                  } @else {
+                    <p class="muted-copy">No taught skills are recorded for this module.</p>
+                  }
+                </article>
+              }
+            </div>
+          } @else {
+            <p class="muted-copy">No modules are included in this training.</p>
+          }
+        </section>
+
+        @if (actionError()) {
+          <p class="form-error" role="alert">{{ actionError() }}</p>
+        }
+        <button
+          class="follow-button"
+          type="button"
+          [disabled]="alreadyFollowed() || !canFollow()"
+          (click)="followTraining()">
+          @if (profileLoading()) {
+            Loading profile…
+          } @else if (alreadyFollowed()) {
+            Followed
+          } @else if (savingFollow()) {
+            Saving…
+          } @else {
+            Mark as followed
+          }
+        </button>
+      }
+    </section>
+  </div>
+</section>

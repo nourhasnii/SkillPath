@@ -1,0 +1,62 @@
+<section class="dashboard-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">ADMINISTRATION</p>
+      <h1>User management</h1>
+      <p class="page-description">Review SkillPath accounts and manage their access roles.</p>
+    </div>
+    <button class="button-secondary" type="button" (click)="loadUsers()" [disabled]="loading()">Refresh</button>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="state-card error-state" role="alert"><strong>Users unavailable</strong><p>{{ errorMessage() }}</p></div>
+  }
+  @if (successMessage()) {
+    <div class="profile-feedback profile-success" role="status">{{ successMessage() }}</div>
+  }
+
+  <div class="toolbar admin-users-toolbar">
+    <label class="search-control">
+      <span aria-hidden="true">⌕</span>
+      <input aria-label="Search users" [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Search by name, email, or role">
+    </label>
+    <span class="user-count">{{ filteredUsers().length }} {{ filteredUsers().length === 1 ? 'account' : 'accounts' }}</span>
+  </div>
+
+  <div class="entity-table-wrap">
+    @if (loading()) {
+      <div class="table-skeleton"></div><div class="table-skeleton"></div><div class="table-skeleton"></div>
+    } @else if (filteredUsers().length) {
+      <table class="entity-table admin-users-table">
+        <thead><tr><th>ACCOUNT</th><th>EMAIL</th><th>ROLE</th><th>ACCESS</th></tr></thead>
+        <tbody>
+          @for (user of filteredUsers(); track user.id) {
+            <tr>
+              <td><div class="entity-name"><span class="entity-avatar">{{ user.full_name.slice(0, 1).toUpperCase() }}</span><span>{{ user.full_name }}</span></div></td>
+              <td>{{ user.email }}</td>
+              <td><span class="class-badge">{{ user.role }}</span></td>
+              <td>
+                <div class="admin-role-actions">
+                  <select [ngModel]="roleFor(user)" (ngModelChange)="setDraft(user, $event)" [attr.aria-label]="'Role for ' + user.full_name" [disabled]="busyIds().has(user.id)">
+                    <option value="STUDENT">Student</option>
+                    <option value="PROFESSIONAL">Professional</option>
+                    <option value="ADMIN">Admin</option>
+                  </select>
+                  <button class="button-secondary" type="button" [disabled]="roleFor(user) === user.role || busyIds().has(user.id)" (click)="saveRole(user)">
+                    {{ busyIds().has(user.id) ? 'Saving…' : 'Save' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <div class="state-card">
+        <span class="empty-state-icon" aria-hidden="true">◎</span>
+        <strong>No accounts found</strong>
+        <p>Try a different name, email address, or role.</p>
+      </div>
+    }
+  </div>
+</section>

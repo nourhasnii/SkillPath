@@ -1,0 +1,85 @@
+.onboarding-heading {
+  align-items: center;
+}
+
+.onboarding-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.step-dot {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  color: #64748b;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.step-dot.active {
+  border-color: #5b4fe9;
+  background: #f0efff;
+  color: #5b4fe9;
+}
+
+.step-dot.done {
+  border-color: #5b4fe9;
+  background: #5b4fe9;
+  color: #fff;
+}
+
+.onboarding-review {
+  display: grid;
+  gap: 12px;
+}
+
+.review-item {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.review-item span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.review-item strong {
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.field-error {
+  color: #b91c1c;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.review-wide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+  .onboarding-heading {
+    align-items: flex-start;
+  }
+
+  .onboarding-stepper {
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

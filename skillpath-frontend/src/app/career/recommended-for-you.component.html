@@ -1,0 +1,48 @@
+<section class="sp-card recommendations-card" aria-labelledby="recommendations-title">
+  <header class="recommendations-heading">
+    <div>
+      <p class="sp-eyebrow">Build your skills</p>
+      <h2 id="recommendations-title">Recommended for you</h2>
+    </div>
+    @if (recommendations().length) {
+      <span class="sp-badge sp-badge-violet">{{ recommendations().length }} skills</span>
+    }
+  </header>
+
+  @if (loading()) {
+    <p class="recommendations-state" role="status">Finding skills related to your profile…</p>
+  } @else if (error()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p>
+  } @else if (!recommendations().length) {
+    <p class="recommendations-state">Add some skills to get recommendations</p>
+  } @else {
+    <div class="recommendations-list">
+      @for (recommendation of recommendations(); track recommendation.competence) {
+        <article class="recommendation-item">
+          <div class="recommendation-skill">
+            <h3>{{ recommendation.competence }}</h3>
+            <span class="sp-badge sp-badge-neutral">Score {{ recommendation.score }}</span>
+          </div>
+          <p class="recommendation-why">
+            <strong>Why:</strong> {{ recommendation.explanations.join(' ') }}
+          </p>
+          @if (recommendation.teachings.length) {
+            <ul class="recommendation-teachings">
+              @for (teaching of recommendation.teachings; track teaching.type + teaching.name) {
+                <li>
+                  <span>{{ teaching.name }}</span>
+                  <span class="teaching-meta">
+                    {{ teaching.type }}
+                    · {{ teaching.duration_hours === null ? 'Duration n/a' : teaching.duration_hours + 'h' }}
+                  </span>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="recommendations-state">No training or module currently teaches this skill.</p>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

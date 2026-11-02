@@ -1,0 +1,189 @@
+{
+  "_comment": "Lexique FR/EN du module TALN SkillPath. Chaque classe et chaque propriété de l'ontologie est reliée à des libellés, des synonymes et des lemmes verbaux. Aucun appel externe : ce fichier est la seule source de vocabulaire du pipeline (spaCy + rapidfuzz + sentence-transformers).",
+  "classes": {
+    "Competence": {
+      "labels": { "fr": ["compétence", "compétences"], "en": ["skill", "skills", "competency", "competencies"] },
+      "synonyms": ["savoir-faire", "expertise", "aptitude", "capacité", "know-how", "ability", "technologie"]
+    },
+    "Formation": {
+      "labels": { "fr": ["formation", "formations"], "en": ["training", "trainings", "course", "courses"] },
+      "synonyms": ["mooc", "cours", "programme", "curriculum", "certificat", "diplôme"]
+    },
+    "Module": {
+      "labels": { "fr": ["module", "modules"], "en": ["module", "modules"] },
+      "synonyms": ["unité", "bloc", "chapitre", "unit", "lesson"]
+    },
+    "Metier": {
+      "labels": { "fr": ["métier", "métiers", "emploi", "poste", "profession"], "en": ["occupation", "occupations", "job", "jobs", "profession", "role"] },
+      "synonyms": ["métier cible", "target occupation", "carrière", "career", "fonction"]
+    },
+    "FamilleMetier": {
+      "labels": { "fr": ["famille", "familles", "famille de métiers", "famille de métier"], "en": ["family", "families", "job family"] },
+      "synonyms": ["domaine", "secteur", "branche", "domain", "sector"]
+    },
+    "Niveau": {
+      "labels": { "fr": ["niveau", "niveaux"], "en": ["level", "levels"] },
+      "synonyms": ["grade", "degré", "seniority"]
+    },
+    "ProfilUtilisateur": {
+      "labels": { "fr": ["profil", "profils", "utilisateur", "utilisateurs", "apprenant", "apprenants"], "en": ["profile", "profiles", "user", "users", "learner", "learners"] },
+      "synonyms": ["candidat", "candidate", "étudiant", "professionnel", "student", "professional", "compte"]
+    },
+    "Parcours": {
+      "labels": { "fr": ["parcours", "parcours de formation", "chemin"], "en": ["path", "paths", "learning path", "track"] },
+      "synonyms": ["itinéraire", "roadmap", "trajectoire"]
+    },
+    "Evaluation": {
+      "labels": { "fr": ["évaluation", "évaluations", "examen", "examens"], "en": ["evaluation", "evaluations", "assessment", "assessments", "exam", "exams"] },
+      "synonyms": ["test", "tests", "quiz", "certification"]
+    }
+  },
+  "properties": {
+    "enseigne": {
+      "kind": "object",
+      "labels": { "fr": ["enseigne", "enseignent", "enseignée", "enseignées", "enseigné", "apprend", "apprennent", "apprise"], "en": ["teach", "teaches", "taught", "covers", "covered", "learns"] },
+      "synonyms": ["dispense", "dispensent", "transmet", "transmettent", "forme sur", "forme à", "propose", "proposent"],
+      "verb_lemmas": { "fr": ["enseigner", "apprendre"], "en": ["teach", "learn", "cover"] }
+    },
+    "moduleEnseigne": {
+      "kind": "object",
+      "labels": { "fr": ["module enseigne", "module enseignent", "le module traite"], "en": ["module teaches", "module covers"] },
+      "synonyms": ["module forme sur", "module aborde"],
+      "verb_lemmas": { "fr": ["enseigner", "apprendre"], "en": ["teach", "cover"] }
+    },
+    "contientModule": {
+      "kind": "object",
+      "labels": { "fr": ["contient", "contiennent", "comprend", "comprennent"], "en": ["contains", "contain", "includes", "include"] },
+      "synonyms": ["est composée de", "regroupe", "embarque"],
+      "verb_lemmas": { "fr": ["contenir", "inclure", "comprendre"], "en": ["contain", "include"] }
+    },
+    "aPourPrerequis": {
+      "kind": "object",
+      "labels": { "fr": ["prérequis", "pré-requis", "prerequis", "prérequiert", "prérequièrent"], "en": ["prerequisite", "prerequisites", "prereq", "prereqs"] },
+      "synonyms": ["exige avant", "nécessite d'abord", "requis en amont", "requires first"],
+      "verb_lemmas": { "fr": ["prérequérir"], "en": ["prerequisite"] }
+    },
+    "requiert": {
+      "kind": "object",
+      "labels": { "fr": ["requiert", "requièrent", "exige", "exigent", "nécessite", "nécessitent", "demande", "demandent"], "en": ["requires", "require", "needs", "need", "demands", "demand"] },
+      "synonyms": ["a besoin de", "s'appuie sur", "repose sur"],
+      "verb_lemmas": { "fr": ["requérir", "exiger", "nécessiter"], "en": ["require", "need"] }
+    },
+    "appartientA": {
+      "kind": "object",
+      "labels": { "fr": ["appartient", "appartiennent", "relève de", "relèvent de"], "en": ["belongs to", "belong to"] },
+      "synonyms": ["fait partie de", "font partie de", "est rattaché à", "sont rattachés à", "part of"],
+      "verb_lemmas": { "fr": ["appartenir"], "en": ["belong"] }
+    },
+    "necessiteNiveau": {
+      "kind": "object",
+      "labels": { "fr": ["nécessite le niveau", "exige le niveau", "niveau requis", "nécessite un niveau"], "en": ["requires level", "needs level", "required level"] },
+      "synonyms": ["niveau demandé", "niveau minimum"],
+      "verb_lemmas": { "fr": ["nécessiter"], "en": ["require"] }
+    },
+    "aAcquis": {
+      "kind": "object",
+      "labels": { "fr": ["a acquis", "ont acquis", "maîtrise", "maîtrisent", "possède", "possèdent", "détient", "détiennent"], "en": ["has acquired", "acquired", "possesses", "has", "have", "holds"] },
+      "synonyms": ["compétences acquises", "sait faire", "connaît"],
+      "verb_lemmas": { "fr": ["acquérir", "maîtriser", "posséder"], "en": ["acquire", "own", "have"] }
+    },
+    "vise": {
+      "kind": "object",
+      "labels": { "fr": ["vise", "visent", "cible", "ciblent"], "en": ["targets", "target", "aims for", "aims at"] },
+      "synonyms": ["métier visé", "objectif de carrière", "veut devenir"],
+      "verb_lemmas": { "fr": ["viser", "cibler"], "en": ["target", "aim"] }
+    },
+    "aSuivi": {
+      "kind": "object",
+      "labels": { "fr": ["a suivi", "ont suivi", "a terminé", "ont terminé", "a complété"], "en": ["followed", "has followed", "attended", "completed"] },
+      "synonyms": ["formations suivies", "formations terminées"],
+      "verb_lemmas": { "fr": ["suivre", "terminer"], "en": ["follow", "attend", "complete"] }
+    },
+    "suitParcours": {
+      "kind": "object",
+      "labels": { "fr": ["suit le parcours", "suit un parcours", "parcours suivi"], "en": ["follows the path", "enrolled in a path"] },
+      "synonyms": ["parcours en cours"],
+      "verb_lemmas": { "fr": ["suivre"], "en": ["follow"] }
+    },
+    "contientFormation": {
+      "kind": "object",
+      "labels": { "fr": ["contient la formation", "contient les formations", "parcours contient"], "en": ["contains training", "path contains"] },
+      "synonyms": ["formé de", "composé des formations"],
+      "verb_lemmas": { "fr": ["contenir"], "en": ["contain"] }
+    },
+    "aPasseEvaluation": {
+      "kind": "object",
+      "labels": { "fr": ["a passé", "ont passé", "a réussi", "ont réussi", "a validé"], "en": ["passed", "took", "completed the evaluation", "validated"] },
+      "synonyms": ["évaluations passées", "examens réussis"],
+      "verb_lemmas": { "fr": ["passer", "réussir"], "en": ["pass", "take"] }
+    },
+    "aDureeHeures": {
+      "kind": "data",
+      "labels": { "fr": ["durée", "durée en heures", "heures", "dure"], "en": ["duration", "hours", "length", "lasts"] },
+      "synonyms": ["temps de formation", "volume horaire"]
+    },
+    "aNiveau": {
+      "kind": "data",
+      "labels": { "fr": ["niveau", "niveau requis"], "en": ["level", "required level"] },
+      "synonyms": ["grade"]
+    },
+    "aNom": {
+      "kind": "data",
+      "labels": { "fr": ["nom", "libellé", "intitulé"], "en": ["name", "label", "title"] },
+      "synonyms": ["appellation"]
+    },
+    "aCodeESCO": {
+      "kind": "data",
+      "labels": { "fr": ["code esco", "code"], "en": ["esco code", "code"] },
+      "synonyms": []
+    },
+    "aOrdreFormations": {
+      "kind": "data",
+      "labels": { "fr": ["ordre des formations", "ordre"], "en": ["order of trainings", "order"] },
+      "synonyms": []
+    },
+    "aDateDebut": {
+      "kind": "data",
+      "labels": { "fr": ["date de début", "début"], "en": ["start date", "begin date"] },
+      "synonyms": []
+    }
+  },
+  "modifiers": {
+    "negation": { "fr": ["ne", "pas", "aucun", "aucune", "sans", "jamais"], "en": ["no", "not", "without", "never", "none"] },
+    "count": { "fr": ["combien", "nombre", "nombre de"], "en": ["how many", "count", "number of"] },
+    "less": { "fr": ["moins", "inférieur", "inférieure", "sous", "en dessous"], "en": ["less", "fewer", "under", "below"] },
+    "more": { "fr": ["plus", "supérieur", "supérieure", "au dessus"], "en": ["more", "greater", "over", "above"] },
+    "detail": { "fr": ["détails", "détail", "tout sur", "informations sur", "fiche", "décris", "décrire"], "en": ["details", "everything about", "information about", "describe"] },
+    "common": { "fr": ["commun", "communs", "commune", "communes", "en commun", "partagé", "partagés", "partagées"], "en": ["common", "shared", "in common"] },
+    "transitive": { "fr": ["tous les prérequis", "chaîne des prérequis", "chaîne de prérequis", "prérequis transitifs", "tous les prerequis"], "en": ["all prerequisites", "prerequisite chain", "transitive prerequisites"] },
+    "list": { "fr": ["liste", "lister", "affiche", "afficher", "quels", "quelles", "quel", "quelle", "montre", "montrer", "donne", "donner", "tous", "toutes"], "en": ["list", "show", "which", "what", "all", "display", "give"] },
+    "self": { "fr": ["mes", "mon", "ma", "moi", "me", "je", "m"], "en": ["my", "mine", "me", "i", "myself"] },
+    "orphan": { "fr": ["orphelin", "orphelins", "orpheline", "orphelines", "aucune formation", "sans formation"], "en": ["orphan", "orphans", "no training", "without training"] }
+  },
+  "dedicated": {
+    "competences_manquantes_metier": {
+      "fr": ["quelles compétences me manquent", "compétences manquantes", "ce qu'il me manque", "mes lacunes", "compétences à acquérir pour"],
+      "en": ["which skills am i missing", "missing skills", "what am i missing", "my skill gaps", "skills i need for"]
+    },
+    "metiers_eligibles_profil": {
+      "fr": ["quels métiers puis-je exercer", "métiers accessibles", "métiers que je peux viser", "à quels métiers je suis éligible", "métiers possibles avec mon profil"],
+      "en": ["which occupations can i do", "eligible occupations", "jobs i can apply for", "occupations i qualify for"]
+    },
+    "profils_eligibles_metier": {
+      "fr": ["quels profils sont éligibles", "profils éligibles pour", "qui peut exercer le métier", "profils correspondant au métier"],
+      "en": ["which profiles are eligible", "eligible profiles for", "who can do the job", "profiles matching the occupation"]
+    },
+    "formations_combler_ecarts": {
+      "fr": ["quelles formations comblent mes lacunes", "formations pour mes compétences manquantes", "formations qui me manquent", "que suivre pour combler"],
+      "en": ["which trainings close my gaps", "trainings for my missing skills", "what should i study to fill my gaps"]
+    },
+    "parcours_optimal": {
+      "fr": ["quel est mon parcours optimal", "parcours optimal", "meilleur parcours", "parcours recommandé pour moi"],
+      "en": ["what is my optimal path", "optimal path", "best learning path for me"]
+    },
+    "competences_acquises_profil": {
+      "fr": ["quelles compétences ai-je", "mes compétences", "compétences que je possède"],
+      "en": ["which skills do i have", "my skills", "skills i possess"]
+    }
+  }
+}

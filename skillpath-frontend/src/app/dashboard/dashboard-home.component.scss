@@ -1,0 +1,128 @@
+.home-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.repo-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 8px 13px;
+  border: 1px solid #E2E8F0;
+  border-radius: 999px;
+  color: #475569;
+  background: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.repo-status i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94A3B8;
+}
+
+.repo-status--online {
+  border-color: #BBF7D0;
+  color: #166534;
+  background: #F0FDF4;
+}
+
+.repo-status--online i {
+  background: #22C55E;
+  box-shadow: 0 0 0 3px #DCFCE7;
+}
+
+.repo-status--offline {
+  border-color: #FECACA;
+  color: #B91C1C;
+  background: #FEF2F2;
+}
+
+.repo-status--offline i { background: #EF4444; }
+
+.kpi-link {
+  display: flex;
+  min-height: 176px;
+  flex-direction: column;
+  align-items: flex-start;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.kpi-link:hover,
+.kpi-link:focus-visible {
+  border-color: #C7C2FF;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+  transform: translateY(-2px);
+}
+
+.kpi-detail {
+  color: #94A3B8;
+  font-size: 12px;
+}
+
+.kpi-go {
+  margin-top: auto;
+  color: #5B4FE9;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.kpi-link:hover .kpi-go,
+.kpi-link:focus-visible .kpi-go {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.section-description {
+  margin: 8px 0 0;
+  color: #64748B;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.quick-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 3px;
+}
+
+.quick-copy small {
+  overflow: hidden;
+  color: #64748B;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.state-card .button-secondary { margin-top: 18px; }
+
+@media (max-width: 760px) {
+  .home-hero {
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kpi-link,
+  .kpi-go { transition: none; }
+}

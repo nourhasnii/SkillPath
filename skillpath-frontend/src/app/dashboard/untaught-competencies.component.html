@@ -1,0 +1,60 @@
+<section class="dashboard-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">ADMINISTRATION · ANALYSES</p>
+      <h1>Compétences non enseignées</h1>
+      <p class="page-description">
+        Compétences techniques et transversales sans formation enseignante dans le catalogue.
+      </p>
+    </div>
+    <button class="button-secondary" type="button" (click)="refresh()" [disabled]="loading()">
+      {{ loading() ? 'Analyse…' : 'Actualiser' }}
+    </button>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="state-card error-state" role="alert">
+      <strong>Analyse indisponible</strong>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <p class="muted-note analysis-summary">
+    {{ totalCompetencies() }} compétence(s) sans formation identifiée(s)
+  </p>
+
+  <div class="entity-table-wrap">
+    @if (loading() && !loaded()) {
+      <div class="table-skeleton"></div>
+      <div class="table-skeleton"></div>
+      <div class="table-skeleton"></div>
+    } @else if (competencies().length) {
+      <table class="entity-table">
+        <thead>
+          <tr>
+            <th>COMPÉTENCE</th>
+            <th>IDENTIFIANT</th>
+            <th>TYPE</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (competency of competencies(); track competency.id) {
+            <tr>
+              <td><strong>{{ competency.name }}</strong></td>
+              <td><span class="entity-id">{{ competency.id }}</span></td>
+              <td>
+                <span class="class-badge">{{ competency.class }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else if (!loading() && !errorMessage()) {
+      <div class="state-card">
+        <span class="empty-state-icon" aria-hidden="true">◎</span>
+        <strong>Toutes les compétences sont enseignées</strong>
+        <p>Aucune compétence technique ou transverse n’est sans formation dans le catalogue.</p>
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,55 @@
+.dashboard-page .redundant-toolbar {
+  grid-template-columns: minmax(280px, 1fr) repeat(2, minmax(160px, 220px));
+}
+
+.dashboard-page .redundant-summary {
+  margin: 0 0 16px;
+}
+
+.dashboard-page .redundant-table td {
+  vertical-align: top;
+}
+
+.pair-label {
+  display: grid;
+  gap: 3px;
+}
+
+.pair-label .entity-id {
+  font-weight: 450;
+}
+
+.dashboard-page .redundant-table .class-badge {
+  margin-top: 8px;
+}
+
+.score-pill {
+  display: inline-flex;
+  min-width: 58px;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.score-high {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.score-medium {
+  color: #b45309;
+  background: #fffbeb;
+}
+
+.dashboard-page .pair-explanation {
+  max-width: 360px;
+  line-height: 1.55;
+}
+
+@media (max-width: 760px) {
+  .dashboard-page .redundant-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

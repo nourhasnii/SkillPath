@@ -1,0 +1,410 @@
+<section class="profile-page" aria-labelledby="profile-title">
+  @if (errorMessage()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <div class="sp-state" role="status">
+      <span class="sp-spinner" aria-hidden="true"></span>
+      <p>Loading your career profile…</p>
+    </div>
+  } @else if (profile(); as current) {
+    <header class="profile-hero sp-card">
+      <div class="hero-avatar" aria-hidden="true">{{ initials() }}</div>
+      <div class="hero-copy">
+        <p class="sp-eyebrow">Career profile</p>
+        <h1 id="profile-title">{{ displayName() }}</h1>
+        <div class="hero-meta">
+          <span class="sp-badge sp-badge-violet">{{ roleLabel() }}</span>
+          @if (current.target_occupation; as occupation) {
+            <span class="hero-target">
+              <sp-icon name="target" [size]="14" />
+              {{ displayLabel(occupation.label) }}
+            </span>
+          } @else {
+            <span class="hero-target is-empty">No target occupation set</span>
+          }
+        </div>
+      </div>
+      <dl class="hero-facts">
+        <div><dt>Skills</dt><dd>{{ skills().length }}</dd></div>
+        <div><dt>Trainings</dt><dd>{{ trainingsFollowed().length }}</dd></div>
+        <div><dt>Assessments</dt><dd>{{ evaluations().length }}</dd></div>
+      </dl>
+    </header>
+
+    @if (successMessage()) {
+      <p class="sp-alert sp-alert-success" role="status">{{ successMessage() }}</p>
+    }
+
+    <div class="profile-overview">
+      <section class="sp-card sp-card-pad completeness-card" aria-labelledby="completeness-title">
+        <div class="completeness-head">
+          <div>
+            <h2 id="completeness-title">Profile completeness</h2>
+            <p>Based on the information saved in your profile.</p>
+          </div>
+          <span class="completeness-score">{{ completeness() }}<small>%</small></span>
+        </div>
+        <div
+          class="completeness-track"
+          role="progressbar"
+          aria-label="Profile completeness"
+          [attr.aria-valuenow]="completeness()"
+          aria-valuemin="0"
+          aria-valuemax="100">
+          <span class="completeness-fill" [style.width.%]="completeness()"></span>
+        </div>
+        <ul class="completeness-steps">
+          @for (step of completenessSteps(); track step.key) {
+            <li [class.is-done]="step.done">
+              <sp-icon [name]="step.done ? 'check' : 'alert'" [size]="14" />
+              <span>{{ step.label }}</span>
+              <em>25%</em>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <section class="sp-card sp-card-pad suggestions-card" aria-labelledby="suggestions-title">
+        <h2 id="suggestions-title">Next steps</h2>
+        @if (suggestions().length) {
+          <ul class="suggestion-list">
+            @for (suggestion of suggestions(); track suggestion) {
+              <li><span class="suggestion-dot" aria-hidden="true"></span>{{ suggestion }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="suggestion-complete">
+            <sp-icon name="check" [size]="15" />
+            Every block tracked by this page is already filled in.
+          </p>
+        }
+      </section>
+    </div>
+
+    <!-- 1. Target occupation -->
+    <section class="sp-card sp-card-pad section-card" aria-labelledby="occupation-title">
+      <div class="section-head">
+        <span class="section-icon"><sp-icon name="target" /></span>
+        <div>
+          <h2 id="occupation-title">Target occupation</h2>
+          <p>The role you are working towards.</p>
+        </div>
+      </div>
+      <div class="inline-form">
+        <label class="field">
+          <span>Occupation</span>
+          <select
+            [ngModel]="selectedOccupation()"
+            (ngModelChange)="selectedOccupation.set($event)"
+            [disabled]="!!busy()">
+            <option value="">No target occupation yet</option>
+            @for (occupation of occupations(); track occupation.id) {
+              <option [value]="occupation.id">{{ displayLabel(occupation.label) }}</option>
+            }
+          </select>
+        </label>
+        <button
+          type="button"
+          class="sp-btn sp-btn-primary"
+          (click)="saveOccupation()"
+          [disabled]="!!busy() || selectedOccupation() === (current.target_occupation?.id ?? '')">
+          @if (busy() === 'occupation') {
+            <span class="spinner-sm" aria-hidden="true"></span> Saving…
+          } @else {
+            Save occupation
+          }
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. Skills -->
+    <section class="sp-card sp-card-pad section-card" aria-labelledby="skills-title">
+      <div class="section-head">
+        <span class="section-icon"><sp-icon name="sparkle" /></span>
+        <div>
+          <h2 id="skills-title">Skills you have</h2>
+          <p>
+            Everything you have added to your profile. SkillPath does not record a
+            proficiency level for a skill.
+          </p>
+        </div>
+      </div>
+
+      @if (skills().length) {
+        <ul class="chip-list">
+          @for (skill of skills(); track skill.id) {
+            <li class="skill-chip">
+              <span>{{ displayLabel(skill.label) }}</span>
+              <button
+                type="button"
+                class="chip-remove"
+                [disabled]="!!busy()"
+                (click)="removeSkill(skill.id)"
+                [attr.aria-label]="'Remove ' + skill.label">
+                <sp-icon name="close" [size]="13" />
+              </button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty-line">No skill added yet.</p>
+      }
+
+      <div class="add-grid">
+        <div class="add-block">
+          <h3>Choose a skill</h3>
+          <div class="inline-form">
+            <label class="field">
+              <span class="sr-only">Skill</span>
+              <select
+                [ngModel]="selectedSkill()"
+                (ngModelChange)="selectedSkill.set($event)"
+                [disabled]="!!busy()">
+                <option value="">Choose a skill…</option>
+                @for (competence of availableSkills(); track competence.id) {
+                  <option [value]="competence.id">{{ displayLabel(competence.label) }}</option>
+                }
+              </select>
+            </label>
+            <button
+              type="button"
+              class="sp-btn sp-btn-secondary"
+              (click)="addSelectedSkill()"
+              [disabled]="!!busy() || !selectedSkill()">
+              @if (busy() === 'skills') {
+                <span class="spinner-sm" aria-hidden="true"></span> Adding…
+              } @else {
+                Add skill
+              }
+            </button>
+          </div>
+        </div>
+
+        <div class="add-block">
+          <h3>Or describe them in your own words</h3>
+          <div class="inline-form">
+            <label class="field">
+              <span class="sr-only">Free text</span>
+              <input
+                type="text"
+                maxlength="500"
+                placeholder="python, sql, cloud"
+                [ngModel]="freeText()"
+                (ngModelChange)="freeText.set($event)"
+                [disabled]="resolving() || !!busy()" />
+            </label>
+            <button
+              type="button"
+              class="sp-btn sp-btn-secondary"
+              (click)="resolveSkills()"
+              [disabled]="resolving() || !!busy() || !freeText().trim()">
+              @if (resolving()) {
+                <span class="spinner-sm" aria-hidden="true"></span> Matching…
+              } @else {
+                Match skills
+              }
+            </button>
+          </div>
+          <p class="add-hint">
+            We match what you type against the SkillPath skill list — nothing is saved until you
+            confirm.
+          </p>
+
+          @if (pendingCandidates().length) {
+            <ul class="candidate-list">
+              @for (candidate of pendingCandidates(); track candidate.iri) {
+                <li>
+                  <div class="candidate-copy">
+                    <strong>{{ displayLabel(candidate.label) }}</strong>
+                    <small>matched “{{ candidate.mention }}” · {{ candidate.score }}% similarity</small>
+                  </div>
+                  <button
+                    type="button"
+                    class="sp-btn sp-btn-secondary"
+                    (click)="confirmCandidate(candidate)"
+                    [disabled]="!!busy()">
+                    @if (busy() === 'candidate-' + candidate.iri) {
+                      <span class="spinner-sm" aria-hidden="true"></span> Adding…
+                    } @else {
+                      Add
+                    }
+                  </button>
+                </li>
+              }
+            </ul>
+          } @else if (resolvedText() && candidates().length === 0) {
+            <p class="empty-line">
+              No matching skill found for “{{ resolvedText() }}”. Try another wording.
+            </p>
+          } @else if (resolvedText()) {
+            <p class="empty-line">Every matched skill is already in your profile.</p>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Trainings followed -->
+    <section class="sp-card sp-card-pad section-card" aria-labelledby="trainings-title">
+      <div class="section-head">
+        <span class="section-icon"><sp-icon name="path" /></span>
+        <div>
+          <h2 id="trainings-title">Trainings you completed</h2>
+          <p>
+            Trainings you have marked as completed. This is what counts as actually followed.
+          </p>
+        </div>
+      </div>
+
+      @if (trainingsFollowed().length) {
+        <ul class="row-list">
+          @for (training of trainingsFollowed(); track training.id) {
+            <li>
+              <div class="row-copy">
+                <strong>{{ displayLabel(training.label) }}</strong>
+                <small>{{ trainingType(training.id) }}</small>
+              </div>
+              <button
+                type="button"
+                class="sp-btn sp-btn-danger"
+                (click)="removeTraining(training.id)"
+                [disabled]="!!busy()">
+                @if (busy() === 'remove-training-' + training.id) {
+                  <span class="spinner-sm" aria-hidden="true"></span> Removing…
+                } @else {
+                  Remove
+                }
+              </button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty-line">No training completed yet.</p>
+      }
+
+      <div class="inline-form">
+        <label class="field">
+          <span>Add a training from the catalogue</span>
+          <select
+            [ngModel]="selectedTraining()"
+            (ngModelChange)="selectedTraining.set($event)"
+            [disabled]="!!busy()">
+            <option value="">Choose a training…</option>
+            @for (training of availableTrainings(); track training.id) {
+              <option [value]="training.id">{{ displayLabel(training.label) }}</option>
+            }
+          </select>
+        </label>
+        <button
+          type="button"
+          class="sp-btn sp-btn-secondary"
+          (click)="addSelectedTraining()"
+          [disabled]="!!busy() || !selectedTraining()">
+          @if (busy() === 'trainings') {
+            <span class="spinner-sm" aria-hidden="true"></span> Adding…
+          } @else {
+            Add training
+          }
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. Learning path -->
+    <section class="sp-card sp-card-pad section-card" aria-labelledby="path-title">
+      <div class="section-head">
+        <span class="section-icon"><sp-icon name="layers" /></span>
+        <div>
+          <h2 id="path-title">Learning path</h2>
+          <p>The trainings you plan to follow, in order.</p>
+        </div>
+      </div>
+
+      @if (parcours(); as path) {
+        <div class="path-block">
+          <strong>{{ path.label }}</strong>
+          @if (path.formations.length) {
+            <ol class="path-steps">
+              @for (formation of path.formations; track formation.id) {
+                <li>
+                  <span class="path-index">{{ $index + 1 }}</span>
+                  {{ displayLabel(formation.label) }}
+                </li>
+              }
+            </ol>
+          } @else {
+            <p class="empty-line">This path does not contain any training yet.</p>
+          }
+        </div>
+      } @else {
+        <div class="path-empty">
+          <p>
+            You have not saved a learning path yet. The optimal-path analysis ranks the
+            trainings that close your remaining gaps.
+          </p>
+          <a class="sp-btn sp-btn-primary" routerLink="/parcours-optimal">Build optimal path</a>
+        </div>
+      }
+    </section>
+
+    <!-- 5. Evaluations -->
+    <section class="sp-card sp-card-pad section-card" aria-labelledby="evaluations-title">
+      <div class="section-head">
+        <span class="section-icon"><sp-icon name="check" /></span>
+        <div>
+          <h2 id="evaluations-title">Career assessments</h2>
+          <p>Your automatic career assessments.</p>
+        </div>
+      </div>
+
+      @if (evaluations().length) {
+        <ul class="row-list">
+          @for (evaluation of evaluations(); track evaluation.id) {
+            <li>
+              <div class="row-copy">
+                <strong>{{ displayLabel(evaluation.label) }}</strong>
+                <small>{{ displayLabel(evaluation.id) }}</small>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <div class="sp-state">
+          <h3>No assessment recorded</h3>
+          <p>
+            You have not taken a career assessment yet. Nothing is displayed rather than an
+            invented certificate.
+          </p>
+        </div>
+      }
+    </section>
+
+    <!-- 6. Semantic actions -->
+    <section class="sp-card sp-card-pad section-card" aria-labelledby="actions-title">
+      <div class="section-head">
+        <span class="section-icon"><sp-icon name="sparkle" /></span>
+        <div>
+          <h2 id="actions-title">Continue your analysis</h2>
+          <p>These workspaces reopen your current profile — the one shown above.</p>
+        </div>
+      </div>
+      <div class="action-grid">
+        @for (action of semanticActions; track action.path) {
+          <a class="action-card" [routerLink]="action.path">
+            <span class="action-icon"><sp-icon [name]="action.icon" [size]="17" /></span>
+            <span class="action-copy">
+              <strong>{{ action.label }}</strong>
+              <small>{{ action.description }}</small>
+            </span>
+            <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        }
+      </div>
+    </section>
+  } @else if (!errorMessage()) {
+    <div class="sp-state">
+      <h3>Profile unavailable</h3>
+      <p>No profile could be loaded for this account.</p>
+    </div>
+  }
+</section>

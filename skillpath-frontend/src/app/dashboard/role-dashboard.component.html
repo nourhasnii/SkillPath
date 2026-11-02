@@ -1,0 +1,194 @@
+<div class="dashboard-shell">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/" aria-label="SkillPath home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>skillpath<span class="brand-period">.</span></span>
+    </a>
+    <nav class="side-navigation" aria-label="Personal navigation">
+      <div class="nav-group">
+        <p>WORKSPACE</p>
+        @if (user()?.role === 'STUDENT') {
+          <a routerLink="/student/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <span class="nav-icon">⌂</span> Home
+          </a>
+        } @else {
+          <a routerLink="/professional/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <span class="nav-icon">⌂</span> Home
+          </a>
+        }
+        <a routerLink="/account/profile" routerLinkActive="active">
+          <span class="nav-icon">◎</span> My profile
+        </a>
+      </div>
+      <div class="nav-group">
+        <p>CAREER TOOLS</p>
+        <a routerLink="/skill-gap"><span class="nav-icon">⌁</span> Skill Gap</a>
+        <a routerLink="/learning-path"><span class="nav-icon">→</span> Learning Path</a>
+        <a routerLink="/knowledge-graph"><span class="nav-icon">◈</span> Knowledge Graph</a>
+      </div>
+    </nav>
+    <button class="back-home" type="button" (click)="signOut()" [disabled]="loggingOut()">
+      <span aria-hidden="true">↪</span> {{ loggingOut() ? 'Signing out…' : 'Sign out' }}
+    </button>
+  </aside>
+
+  <main class="dashboard-main">
+    <header class="topbar">
+      <div class="breadcrumb"><span>SkillPath</span><i>/</i><strong>My workspace</strong></div>
+      <a routerLink="/account/profile" class="workspace-badge"><span></span> {{ user()?.role }}</a>
+    </header>
+    <div class="dashboard-content">
+      <section class="page-heading">
+        <div>
+          <p class="eyebrow">{{ user()?.role === 'STUDENT' ? 'STUDENT WORKSPACE' : 'PROFESSIONAL WORKSPACE' }}</p>
+          <h1>{{ user()?.role === 'STUDENT' ? 'Your learning journey' : 'Your career journey' }}</h1>
+          <p class="page-subtitle">
+            {{ user()?.role === 'STUDENT'
+              ? 'Build skills, explore career options, and follow your progress.'
+              : 'Connect your experience to new opportunities and plan your next move.' }}
+          </p>
+        </div>
+        @if (isProfileIncomplete()) {
+          <a class="primary-button" [routerLink]="user()?.role === 'STUDENT' ? '/student/onboarding' : '/professional/onboarding'">
+            Complete your profile <span>→</span>
+          </a>
+        } @else {
+          <a class="primary-button" routerLink="/account/profile">Manage my profile <span>→</span></a>
+        }
+      </section>
+
+      @if (errorMessage()) {
+        <div class="auth-alert auth-error" role="alert">{{ errorMessage() }}</div>
+      }
+
+      @if (loading()) {
+        <section class="dashboard-grid" aria-label="Loading your workspace">
+          <article class="stat-card skeleton-card"></article>
+          <article class="stat-card skeleton-card"></article>
+          <article class="stat-card skeleton-card"></article>
+        </section>
+      } @else if (accountProfile(); as account) {
+        <section class="dashboard-panel personal-summary" style="margin-top: 0;">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">PROFILE STATUS</p>
+              <h2>{{ isProfileIncomplete() ? 'Complete your profile' : 'Profile ready' }}</h2>
+            </div>
+            <span class="workspace-badge" style="padding: 6px 10px; border: 1px solid #E2E8F0; border-radius: 999px; background: #fff;">
+              {{ completionPercent() }}%
+            </span>
+          </div>
+          <div class="saved-path-progress" role="progressbar" [attr.aria-valuenow]="completionPercent()" aria-valuemin="0" aria-valuemax="100" style="margin-top: 18px;">
+            <span [style.width.%]="completionPercent()"></span>
+          </div>
+          @if (isProfileIncomplete()) {
+            <p class="page-description" style="margin-top: 14px;">
+              Add your target occupation and competencies to unlock personalized skill-gap recommendations.
+            </p>
+          }
+        </section>
+
+        <section class="dashboard-grid personal-stats">
+          <article class="stat-card">
+            <span class="stat-label">Acquired skills</span>
+            <strong>{{ account.profile?.relations?.['aAcquis']?.length ?? 0 }}</strong>
+            <span class="stat-note">Skills in your profile</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Learning paths</span>
+            <strong>{{ account.profile?.relations?.['suitParcours']?.length ?? 0 }}</strong>
+            <span class="stat-note">Paths linked to your profile</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Evaluations</span>
+            <strong>{{ account.profile?.relations?.['aPasseEvaluation']?.length ?? 0 }}</strong>
+            <span class="stat-note">Recorded evaluations</span>
+          </article>
+        </section>
+
+        <section class="dashboard-panel personal-summary">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">YOUR PROFILE</p>
+              <h2>{{ account.full_name }}</h2>
+            </div>
+            <a class="text-action" routerLink="/account/profile">Manage profile <span>→</span></a>
+          </div>
+          <div class="profile-summary-grid">
+            <div>
+              <span class="summary-label">Career goal</span>
+              @if (account.profile?.relations?.['vise']?.length) {
+                <strong>{{ account.profile?.relations?.['vise']?.[0]?.label }}</strong>
+              } @else {
+                <strong class="muted-value">Not set yet</strong>
+              }
+            </div>
+            <div>
+              <span class="summary-label">Experience</span>
+              <strong>{{ account.experience || 'Add your experience' }}</strong>
+            </div>
+          </div>
+        </section>
+
+        @if (account.profile?.relations?.['parcours']?.length) {
+          <section class="dashboard-panel saved-paths">
+            <div class="panel-heading">
+              <div><p class="eyebrow">YOUR PROGRESS</p><h2>Saved learning paths</h2></div>
+            </div>
+            <div class="saved-path-list">
+              @for (path of account.profile?.relations?.['parcours']; track path.id) {
+                <article class="saved-path-card">
+                  <div class="saved-path-heading">
+                    <h3>{{ path.label }}</h3>
+                    <span>{{ completedCount(path) }} / {{ path.formations?.length ?? 0 }} completed</span>
+                  </div>
+                  <div class="saved-path-progress" role="progressbar" [attr.aria-valuenow]="progressPercent(path)" aria-valuemin="0" aria-valuemax="100">
+                    <span [style.width.%]="progressPercent(path)"></span>
+                  </div>
+                  @if (path.formations?.length) {
+                    <ul class="saved-path-trainings">
+                      @for (training of path.formations; track training.id) {
+                        <li [class.training-done]="isTrainingComplete(training.id)">
+                          <span>{{ training.label }}</span>
+                          @if (isTrainingComplete(training.id)) {
+                            <span class="training-status">Completed</span>
+                          } @else {
+                            <button type="button" class="training-complete-button" [disabled]="progressUpdating().has(training.id)" (click)="markTrainingComplete(path, training)">
+                              {{ progressUpdating().has(training.id) ? 'Saving…' : 'Mark complete' }}
+                            </button>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  } @else {
+                    <p class="profile-empty-options">This learning path has no training linked to it.</p>
+                  }
+                </article>
+              }
+            </div>
+          </section>
+        }
+      }
+
+      <section class="quick-actions-section">
+        <div class="section-title">
+          <div><p class="eyebrow">GET STARTED</p><h2>Career tools</h2></div>
+        </div>
+        <div class="quick-action-grid">
+          <a class="quick-action-card" routerLink="/career">
+            <span class="quick-action-icon">⌂</span><span class="quick-action-copy"><strong>Career overview</strong><small>Readiness, priority gaps and your next step.</small></span><span class="quick-action-arrow">→</span>
+          </a>
+          <a class="quick-action-card" routerLink="/skill-gap">
+            <span class="quick-action-icon">⌁</span><span class="quick-action-copy"><strong>Skill Gap</strong><small>Compare your skills with your career goal.</small></span><span class="quick-action-arrow">→</span>
+          </a>
+          <a class="quick-action-card" routerLink="/learning-path">
+            <span class="quick-action-icon">↗</span><span class="quick-action-copy"><strong>Learning Path</strong><small>Explore training options for your next step.</small></span><span class="quick-action-arrow">→</span>
+          </a>
+          <a class="quick-action-card" routerLink="/knowledge-graph">
+            <span class="quick-action-icon">◈</span><span class="quick-action-copy"><strong>Knowledge Graph</strong><small>Browse connections across SkillPath.</small></span><span class="quick-action-arrow">→</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,87 @@
+<section class="dashboard-page">
+  @if (loading()) {
+    <header class="page-heading"><div><p class="eyebrow">ENTITY</p><h1>Loading record…</h1></div></header>
+    <div class="detail-grid">
+      <div class="state-card skeleton-card"><span></span><i></i></div>
+      <div class="state-card skeleton-card"><span></span><i></i></div>
+    </div>
+  } @else if (errorMessage() && !detail()) {
+    <div class="state-card error-state" role="alert">
+      <strong>Entity unavailable</strong>
+      <p>{{ errorMessage() }}</p>
+      <a class="button-secondary" [routerLink]="backLink()">Back to list</a>
+    </div>
+  } @else if (detail(); as entity) {
+    <header class="page-heading">
+      <div>
+        <p class="eyebrow">{{ config?.singular }}</p>
+        <h1>{{ displayName(entity.label) }}</h1>
+        <p class="page-description">{{ displayName(entity.id) }}</p>
+        <span class="class-badge">{{ entity.class }}</span>
+      </div>
+      <div class="heading-actions">
+        <a class="button-secondary" [routerLink]="backLink()">Back</a>
+        <a class="button-secondary" [routerLink]="editLink()">Edit</a>
+        <button class="button-danger" type="button" (click)="deleteEntity()">Delete</button>
+      </div>
+    </header>
+
+    @if (errorMessage()) {
+      <div class="state-card error-state detail-error" role="alert"><p>{{ errorMessage() }}</p></div>
+    }
+
+    <div class="detail-grid">
+      <section class="panel">
+        <h2>Properties</h2>
+        @if (propertyEntries().length > 0) {
+          <div class="property-list">
+            @for (property of propertyEntries(); track property.key) {
+              <div class="property-item">
+                <span>{{ property.label }}</span>
+                <strong>{{ property.values.join(', ') }}</strong>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="muted-note">No literal properties are defined for this individual.</p>
+        }
+      </section>
+
+      <section class="panel">
+        <h2>Relations</h2>
+        @for (relation of config?.relations ?? []; track relation.key) {
+          <div class="relation-group">
+            <h3>{{ relation.label }}</h3>
+            @if (relationItems(relation.key).length > 0) {
+              <div class="relation-list">
+                @for (item of relationItems(relation.key); track item.id) {
+                  <a class="relation-chip" [routerLink]="relationLink(relation.target, item.id)">
+                    {{ relationLabel(relation.key, item) }}
+                  </a>
+                }
+              </div>
+              @if (relation.key === 'parcours') {
+                @for (path of relationItems(relation.key); track path.id) {
+                  @if (path.formations?.length) {
+                    <div class="relation-group nested-relations">
+                      <h3>Trainings in {{ displayName(path.label) }}</h3>
+                      <div class="relation-list">
+                        @for (training of path.formations; track training.id) {
+                          <a class="relation-chip" [routerLink]="relationLink('Formation', training.id)">
+                            {{ displayName(training.label) }}
+                          </a>
+                        }
+                      </div>
+                    </div>
+                  }
+                }
+              }
+            } @else {
+              <p class="muted-note">No linked entities.</p>
+            }
+          </div>
+        }
+      </section>
+    </div>
+  }
+</section>

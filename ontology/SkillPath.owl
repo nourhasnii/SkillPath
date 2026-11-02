@@ -1,0 +1,1013 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/nour/ontologies/2026/8/untitled-ontology-2/"
+     xml:base="http://www.semanticweb.org/nour/ontologies/2026/8/untitled-ontology-2/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:onto="http://www.skillpath.tn/onto#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:untitled-ontology-2="http://www.semanticweb.org/nour/ontologies/2026/8/untitled-ontology-2#">
+    <owl:Ontology rdf:about="http://www.skillpath.tn/onto#">
+        <owl:versionIRI rdf:resource="http://www.skillpath.tn/onto#"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aAcquis -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#aAcquis">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Competence"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aCompetence -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#aCompetence">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Competence"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aPasseEvaluation -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#aPasseEvaluation">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Evaluation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aPourNiveau -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#aPourNiveau">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Niveau"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aPourPrerequis -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#aPourPrerequis">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aSuivi -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#aSuivi">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#appartientA -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#appartientA">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#FamilleMetier"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#contientFormation -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#contientFormation">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Parcours"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#contientModule -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#contientModule">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Module"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#enseigne -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#enseigne">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.skillpath.tn/onto#estEnseigneeDans"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Competence"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#estEnseigneeDans -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#estEnseigneeDans">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Competence"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#moduleEnseigne -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#moduleEnseigne">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Module"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Competence"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#necessiteNiveau -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#necessiteNiveau">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Niveau"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#requiert -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#requiert">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Competence"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#suitParcours -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#suitParcours">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Parcours"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#vise -->
+
+    <owl:ObjectProperty rdf:about="http://www.skillpath.tn/onto#vise">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+        <rdfs:range rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aCodeESCO -->
+
+    <owl:DatatypeProperty rdf:about="http://www.skillpath.tn/onto#aCodeESCO">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aDateDebut -->
+
+    <owl:DatatypeProperty rdf:about="http://www.skillpath.tn/onto#aDateDebut">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aDateEvaluation -->
+
+    <owl:DatatypeProperty rdf:about="http://www.skillpath.tn/onto#aDateEvaluation">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Evaluation"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aDureeHeures -->
+
+    <owl:DatatypeProperty rdf:about="http://www.skillpath.tn/onto#aDureeHeures">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aNiveau -->
+
+    <owl:DatatypeProperty rdf:about="http://www.skillpath.tn/onto#aNiveau">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Niveau"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aNom -->
+
+    <owl:DatatypeProperty rdf:about="http://www.skillpath.tn/onto#aNom">
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aOrdreFormations -->
+
+    <owl:DatatypeProperty rdf:about="http://www.skillpath.tn/onto#aOrdreFormations">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Parcours"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#aScore -->
+
+    <owl:DatatypeProperty rdf:about="http://www.skillpath.tn/onto#aScore">
+        <rdfs:domain rdf:resource="http://www.skillpath.tn/onto#Evaluation"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.skillpath.tn/onto#Competence -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#Competence"/>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#CompetenceManquante -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#CompetenceManquante">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.skillpath.tn/onto#Competence"/>
+                    <owl:Class>
+                        <owl:complementOf>
+                            <owl:Restriction>
+                                <owl:onProperty>
+                                    <rdf:Description>
+                                        <owl:inverseOf rdf:resource="http://www.skillpath.tn/onto#aAcquis"/>
+                                    </rdf:Description>
+                                </owl:onProperty>
+                                <owl:someValuesFrom rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+                            </owl:Restriction>
+                        </owl:complementOf>
+                    </owl:Class>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#CompetenceTechnique -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#CompetenceTechnique">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Competence"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#CompetenceTransverse -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#CompetenceTransverse">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Competence"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#Evaluation -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#Evaluation"/>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#EvaluationComportementale -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#EvaluationComportementale">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Evaluation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#EvaluationTechnique -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#EvaluationTechnique">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Evaluation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#FamilleIT -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#FamilleIT">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#FamilleMetier"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#FamilleManagement -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#FamilleManagement">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#FamilleMetier"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#FamilleMetier -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#FamilleMetier"/>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#Formation -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#Formation"/>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#FormationEnLigne -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#FormationEnLigne">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#FormationPresentielle -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#FormationPresentielle">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#Metier -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#Metier"/>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#MetierData -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#MetierData">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#MetierDevOps -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#MetierDevOps">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#Module -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#Module"/>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#ModuleTechnique -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#ModuleTechnique">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Module"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#ModuleTransverse -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#ModuleTransverse">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Module"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#Niveau -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#Niveau"/>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#NiveauAvance -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#NiveauAvance">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Niveau"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#NiveauDebutant -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#NiveauDebutant">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Niveau"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#Parcours -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#Parcours"/>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#ParcoursIndividualise -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#ParcoursIndividualise">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Parcours"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#ParcoursOptimal -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#ParcoursOptimal"/>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#ParcoursStandard -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#ParcoursStandard">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#Parcours"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#ProfilEligible -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#ProfilEligible">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+                    <owl:Class>
+                        <owl:complementOf>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.skillpath.tn/onto#vise"/>
+                                <owl:someValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#Metier"/>
+                                            <owl:Restriction>
+                                                <owl:onProperty rdf:resource="http://www.skillpath.tn/onto#requiert"/>
+                                                <owl:someValuesFrom>
+                                                    <owl:Class>
+                                                        <owl:intersectionOf rdf:parseType="Collection">
+                                                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#Competence"/>
+                                                            <owl:Class>
+                                                                <owl:complementOf>
+                                                                    <owl:Restriction>
+                                                                        <owl:onProperty>
+                                                                            <rdf:Description>
+                                                                                <owl:inverseOf rdf:resource="http://www.skillpath.tn/onto#aAcquis"/>
+                                                                            </rdf:Description>
+                                                                        </owl:onProperty>
+                                                                        <owl:someValuesFrom rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+                                                                    </owl:Restriction>
+                                                                </owl:complementOf>
+                                                            </owl:Class>
+                                                        </owl:intersectionOf>
+                                                    </owl:Class>
+                                                </owl:someValuesFrom>
+                                            </owl:Restriction>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:someValuesFrom>
+                            </owl:Restriction>
+                        </owl:complementOf>
+                    </owl:Class>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.skillpath.tn/onto#vise"/>
+                        <owl:someValuesFrom rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#ProfilEtudiant -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#ProfilEtudiant">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#ProfilProfessionnel -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#ProfilProfessionnel">
+        <rdfs:subClassOf rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#ProfilUtilisateur -->
+
+    <owl:Class rdf:about="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_Cloud -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_Cloud">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">50</onto:aDureeHeures>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_DataPipeline -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_DataPipeline">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</onto:aDureeHeures>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_Docker -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_Docker">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</onto:aDureeHeures>
+        <onto:aNom>Docker</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_Git -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_Git">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</onto:aDureeHeures>
+        <onto:aNom>Git</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_Java -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_Java">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">40</onto:aDureeHeures>
+        <onto:aNom>Java</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_Kubernetes -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_Kubernetes">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</onto:aDureeHeures>
+        <onto:aNom>Kubernetes</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_MachineLearning -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_MachineLearning">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">40</onto:aDureeHeures>
+        <onto:aNom>ML</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_Python -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_Python">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">35</onto:aDureeHeures>
+        <onto:aNom>Python</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_SQL -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_SQL">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</onto:aDureeHeures>
+        <onto:aNom>Sql</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#comp_Spark -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#comp_Spark">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#CompetenceTechnique"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#eval_TechniqueDevOps -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#eval_TechniqueDevOps">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#EvaluationTechnique"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#form_DataEng -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#form_DataEng">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.skillpath.tn/onto#aPourPrerequis"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:oneOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#form_MasterCloud"/>
+                        </owl:oneOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdf:type>
+        <onto:aPourPrerequis rdf:resource="http://www.skillpath.tn/onto#form_MasterCloud"/>
+        <onto:enseigne rdf:resource="http://www.skillpath.tn/onto#comp_DataPipeline"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">40</onto:aDureeHeures>
+        <onto:aNom>Data eng</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#form_FormationDevOps -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#form_FormationDevOps">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <onto:aPourPrerequis rdf:resource="http://www.skillpath.tn/onto#form_MoocDocker"/>
+        <onto:enseigne rdf:resource="http://www.skillpath.tn/onto#comp_Docker"/>
+        <onto:enseigne rdf:resource="http://www.skillpath.tn/onto#comp_Kubernetes"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</onto:aDureeHeures>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#form_FormationJava -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#form_FormationJava">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <onto:enseigne rdf:resource="http://www.skillpath.tn/onto#comp_Java"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</onto:aDureeHeures>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#form_MasterCloud -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#form_MasterCloud">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#FormationPresentielle"/>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.skillpath.tn/onto#aPourPrerequis"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:oneOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#form_MoocPython"/>
+                        </owl:oneOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdf:type>
+        <onto:aPourPrerequis rdf:resource="http://www.skillpath.tn/onto#form_MoocPython"/>
+        <onto:contientModule rdf:resource="http://www.skillpath.tn/onto#mod_CloudIntro"/>
+        <onto:enseigne rdf:resource="http://www.skillpath.tn/onto#comp_Cloud"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</onto:aDureeHeures>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#form_MoocDocker -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#form_MoocDocker">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#FormationEnLigne"/>
+        <onto:enseigne rdf:resource="http://www.skillpath.tn/onto#comp_Docker"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</onto:aDureeHeures>
+        <onto:aNom>Docker</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#form_MoocGit -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#form_MoocGit">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#FormationEnLigne"/>
+        <onto:enseigne rdf:resource="http://www.skillpath.tn/onto#comp_Git"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</onto:aDureeHeures>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#form_MoocML -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#form_MoocML">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <onto:aPourPrerequis rdf:resource="http://www.skillpath.tn/onto#form_MoocPython"/>
+        <onto:enseigne rdf:resource="http://www.skillpath.tn/onto#comp_MachineLearning"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#form_MoocPython -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#form_MoocPython">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Formation"/>
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#FormationEnLigne"/>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.skillpath.tn/onto#aPourPrerequis"/>
+                <owl:allValuesFrom rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+            </owl:Restriction>
+        </rdf:type>
+        <onto:contientModule rdf:resource="http://www.skillpath.tn/onto#mod_PythonBase"/>
+        <onto:enseigne rdf:resource="http://www.skillpath.tn/onto#comp_Python"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</onto:aDureeHeures>
+        <onto:aNom>Moc Python</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#met_BackendDeveloper -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#met_BackendDeveloper">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+        <onto:necessiteNiveau rdf:resource="http://www.skillpath.tn/onto#niv_Intermediaire"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Docker"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Git"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Java"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_SQL"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#met_DataEngineer -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#met_DataEngineer">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#MetierData"/>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.skillpath.tn/onto#requiert"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:oneOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#comp_Cloud"/>
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#comp_DataPipeline"/>
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#comp_Python"/>
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#comp_SQL"/>
+                        </owl:oneOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdf:type>
+        <onto:necessiteNiveau rdf:resource="http://www.skillpath.tn/onto#niv_Avance"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Cloud"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_DataPipeline"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Python"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_SQL"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">445</onto:aDureeHeures>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#met_DataScientist -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#met_DataScientist">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#MetierData"/>
+        <onto:necessiteNiveau rdf:resource="http://www.skillpath.tn/onto#niv_Avance"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_MachineLearning"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Python"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_SQL"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Spark"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#met_DevOps -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#met_DevOps">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Metier"/>
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#MetierDevOps"/>
+        <onto:necessiteNiveau rdf:resource="http://www.skillpath.tn/onto#niv_Intermediaire"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Cloud"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Docker"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Git"/>
+        <onto:requiert rdf:resource="http://www.skillpath.tn/onto#comp_Kubernetes"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</onto:aDureeHeures>
+        <onto:aNom>Devops</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#mod_CloudIntro -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#mod_CloudIntro">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#ModuleTechnique"/>
+        <onto:moduleEnseigne rdf:resource="http://www.skillpath.tn/onto#comp_Cloud"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#mod_Communication -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#mod_Communication">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#ModuleTransverse"/>
+        <onto:aDureeHeures rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</onto:aDureeHeures>
+        <onto:aNom>Communication</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#mod_PythonBase -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#mod_PythonBase">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#ModuleTechnique"/>
+        <onto:moduleEnseigne rdf:resource="http://www.skillpath.tn/onto#comp_Python"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#niv_Avance -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#niv_Avance">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#NiveauAvance"/>
+        <onto:aNiveau rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</onto:aNiveau>
+        <onto:aNom>Avancé</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#niv_Debutant -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#niv_Debutant">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#NiveauDebutant"/>
+        <onto:aNiveau rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</onto:aNiveau>
+        <onto:aNom>Débutant</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#niv_Intermediaire -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#niv_Intermediaire">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#Niveau"/>
+        <onto:aNiveau rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</onto:aNiveau>
+        <onto:aNom>Intermédiaire</onto:aNom>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#parc_StandardData -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#parc_StandardData">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#ParcoursStandard"/>
+        <onto:contientFormation rdf:resource="http://www.skillpath.tn/onto#form_MasterCloud"/>
+        <onto:contientFormation rdf:resource="http://www.skillpath.tn/onto#form_MoocPython"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#profil_Ahmed -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#profil_Ahmed">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#ProfilEtudiant"/>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.skillpath.tn/onto#aAcquis"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:oneOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#comp_Cloud"/>
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#comp_DataPipeline"/>
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#comp_Python"/>
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#comp_SQL"/>
+                        </owl:oneOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdf:type>
+        <rdf:type>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.skillpath.tn/onto#vise"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:oneOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.skillpath.tn/onto#met_DataEngineer"/>
+                        </owl:oneOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdf:type>
+        <onto:aAcquis rdf:resource="http://www.skillpath.tn/onto#comp_Cloud"/>
+        <onto:aAcquis rdf:resource="http://www.skillpath.tn/onto#comp_DataPipeline"/>
+        <onto:aAcquis rdf:resource="http://www.skillpath.tn/onto#comp_Python"/>
+        <onto:aAcquis rdf:resource="http://www.skillpath.tn/onto#comp_SQL"/>
+        <onto:aSuivi rdf:resource="http://www.skillpath.tn/onto#form_MasterCloud"/>
+        <onto:aSuivi rdf:resource="http://www.skillpath.tn/onto#form_MoocPython"/>
+        <onto:suitParcours rdf:resource="http://www.skillpath.tn/onto#parc_StandardData"/>
+        <onto:vise rdf:resource="http://www.skillpath.tn/onto#met_DataEngineer"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#profil_Sami -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#profil_Sami">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#ProfilProfessionnel"/>
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#ProfilUtilisateur"/>
+        <onto:aAcquis rdf:resource="http://www.skillpath.tn/onto#comp_Docker"/>
+        <onto:aAcquis rdf:resource="http://www.skillpath.tn/onto#comp_Git"/>
+        <onto:aAcquis rdf:resource="http://www.skillpath.tn/onto#comp_Python"/>
+        <onto:aPasseEvaluation rdf:resource="http://www.skillpath.tn/onto#eval_TechniqueDevOps"/>
+        <onto:vise rdf:resource="http://www.skillpath.tn/onto#met_DevOps"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.skillpath.tn/onto#profil_Sara -->
+
+    <owl:NamedIndividual rdf:about="http://www.skillpath.tn/onto#profil_Sara">
+        <rdf:type rdf:resource="http://www.skillpath.tn/onto#ProfilEtudiant"/>
+        <onto:aAcquis rdf:resource="http://www.skillpath.tn/onto#comp_Python"/>
+        <onto:aAcquis rdf:resource="http://www.skillpath.tn/onto#comp_SQL"/>
+        <onto:aSuivi rdf:resource="http://www.skillpath.tn/onto#form_MoocPython"/>
+        <onto:vise rdf:resource="http://www.skillpath.tn/onto#met_DataEngineer"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+

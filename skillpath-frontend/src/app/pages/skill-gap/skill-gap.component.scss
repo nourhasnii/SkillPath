@@ -1,0 +1,121 @@
+:host { display: block; }
+
+.skill-gap { display: grid; gap: 22px; }
+
+/* ---- page header ------------------------------------------------- */
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.page-head-text { min-width: 0; }
+.page-head h1 { margin: 6px 0 0; color: var(--sp-ink-900); font-size: clamp(26px, 3vw, 34px); font-weight: 750; letter-spacing: -1.2px; }
+.page-lede { max-width: 660px; margin: 10px 0 0; color: var(--sp-ink-500); font-size: 14px; line-height: 1.65; }
+.page-lede strong { color: var(--sp-ink-900); font-weight: 700; }
+.page-head-action { flex: 0 0 auto; }
+
+/* ---- loading / empty states -------------------------------------- */
+.sp-state sp-icon { color: var(--sp-violet-500); }
+
+/* ---- layout ------------------------------------------------------ */
+.report { display: grid; gap: 22px; }
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.35fr) minmax(0, .9fr);
+  gap: 22px;
+}
+
+.chart-card { display: grid; gap: 20px; align-content: start; padding: 22px 24px; }
+.chart-empty { margin: 0; color: var(--sp-ink-500); font-size: 13px; line-height: 1.6; }
+.chart-note { margin: 16px 0 0; color: var(--sp-ink-400); font-size: 11.5px; }
+.comparison-card { padding: 22px 24px; }
+
+/* ---- readiness card ---------------------------------------------- */
+.match-body { display: grid; gap: 18px; justify-items: center; }
+.match-narrative { margin: 0; color: var(--sp-ink-700); font-size: 13px; line-height: 1.7; text-align: center; }
+
+/* ---- tabs -------------------------------------------------------- */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.chip-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 18px;
+  margin-left: 7px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, .08);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.sp-chip.is-active .chip-count { background: rgba(255, 255, 255, .26); }
+
+/* ---- comparison table -------------------------------------------- */
+.comparison-table { display: grid; gap: 4px; }
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1.1fr) 108px 78px 96px minmax(180px, 1.6fr);
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--sp-radius-md);
+  transition: background .15s ease;
+}
+
+.comparison-row:not(.comparison-head):hover { background: var(--sp-surface-muted); }
+
+.comparison-head {
+  padding: 0 14px 10px;
+  border-bottom: 1px solid var(--sp-line);
+  color: var(--sp-ink-400);
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+
+.cell-skill { display: flex; align-items: center; gap: 10px; overflow-wrap: anywhere; color: var(--sp-ink-900); font-size: 13px; font-weight: 650; }
+
+.skill-dot { width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; }
+.skill-dot.acquise { background: var(--sp-emerald-500); }
+.skill-dot.en_cours { background: var(--sp-amber-500); }
+.skill-dot.manquante { background: var(--sp-rose-500); }
+
+.cell-gap { font-size: 12px; font-weight: 750; }
+.cell-gap.acquise { color: #0B7A5A; }
+.cell-gap.en_cours { color: #96620A; }
+.cell-gap.manquante { color: #A8123A; }
+
+.cell-action { color: var(--sp-ink-500); font-size: 12px; line-height: 1.55; }
+
+.comparison-footer { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+
+/* ---- responsive -------------------------------------------------- */
+@media (max-width: 1180px) {
+  .chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .chart-grid > :first-child { grid-column: span 2; }
+  .comparison-row { grid-template-columns: minmax(140px, 1.2fr) 100px 70px 90px minmax(150px, 1.5fr); }
+}
+
+@media (max-width: 900px) {
+  .comparison-row { grid-template-columns: minmax(130px, 1fr) 96px minmax(120px, 1fr); }
+  .comparison-head span:nth-child(3),
+  .comparison-head span:nth-child(4),
+  .comparison-row > :nth-child(3),
+  .comparison-row > :nth-child(4) { display: none; }
+}
+
+@media (max-width: 640px) {
+  .chart-grid { grid-template-columns: 1fr; }
+  .chart-grid > :first-child { grid-column: auto; }
+  .comparison-row { grid-template-columns: 1fr; gap: 8px; }
+  .comparison-head { display: none; }
+  .comparison-row > * { display: block; }
+  .page-head-action { width: 100%; }
+}

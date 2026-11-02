@@ -1,0 +1,102 @@
+<section class="career-bridges-page" aria-labelledby="career-bridges-title">
+  <header class="page-heading">
+    <p class="sp-eyebrow">Explore adjacent roles</p>
+    <h1 id="career-bridges-title">Career bridges</h1>
+    <p>Other occupations you could reach from your current skills</p>
+  </header>
+
+  @if (actionError()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ actionError() }}</p>
+  }
+
+  @if (loading()) {
+    <div class="sp-state" role="status">
+      <span class="sp-spinner" aria-hidden="true"></span>
+      <p>Finding occupations connected to your skills…</p>
+    </div>
+  } @else if (error()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p>
+  } @else if (bridges().length) {
+    <div class="bridge-grid">
+      @for (bridge of bridges(); track bridge.occupationId) {
+        <article class="bridge-card">
+          <header class="bridge-card-heading">
+            <div>
+              <h2>{{ bridge.occupation }}</h2>
+              @if (bridge.family) {
+                <p>{{ bridge.family }}</p>
+              }
+            </div>
+            <strong class="bridge-percent">{{ bridge.percent }}%</strong>
+          </header>
+
+          <div
+            class="bridge-meter"
+            role="progressbar"
+            [attr.aria-label]="'Skills covered for ' + bridge.occupation"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-valuenow]="bridge.percent">
+            <span [style.width.%]="bridge.percent"></span>
+          </div>
+
+          <p class="bridge-skill-line">
+            <strong>You already cover:</strong>
+            {{ bridge.coveredNames.length ? bridge.coveredNames.join(', ') : 'None yet' }}
+          </p>
+          <p class="bridge-skill-line">
+            <strong>Missing:</strong>
+            {{ bridge.missingNames.length ? bridge.missingNames.join(', ') : 'None' }}
+          </p>
+
+          @if (bridge.missingNames.length) {
+            <section class="bridge-trainings" aria-label="Trainings to close the gap">
+              <h3>Trainings to close the gap</h3>
+              @for (gap of bridge.trainings; track gap.competence) {
+                <div class="bridge-gap">
+                  <strong>{{ gap.competence }}</strong>
+                  @if (gap.trainings.length) {
+                    <ul>
+                      @for (training of gap.trainings; track training.id) {
+                        <li>
+                          <span>{{ training.name }}</span>
+                          <small>{{ training.durationHours === null ? 'Duration n/a' : training.durationHours + 'h' }}</small>
+                          @if (training.modules.length) {
+                            <ul class="bridge-modules">
+                              @for (module of training.modules; track module.id) {
+                                <li>
+                                  <span>{{ module.name }}</span>
+                                  <small>{{ module.durationHours === null ? 'Duration n/a' : module.durationHours + 'h' }}</small>
+                                </li>
+                              }
+                            </ul>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  } @else {
+                    <p class="bridge-unavailable">No training available yet</p>
+                  }
+                </div>
+              }
+            </section>
+          }
+
+          @if (context()?.profileIri) {
+            <button
+              type="button"
+              class="sp-btn sp-btn-secondary bridge-action"
+              [disabled]="settingTarget()"
+              (click)="setBridgeAsTarget(bridge)">
+              {{ settingTarget() ? 'Updating…' : 'Set as target occupation' }}
+            </button>
+          }
+        </article>
+      }
+    </div>
+  } @else {
+    <div class="sp-state">
+      <p>No other occupations with required skills are available yet.</p>
+    </div>
+  }
+</section>

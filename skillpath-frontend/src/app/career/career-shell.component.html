@@ -1,0 +1,161 @@
+<div class="career-shell">
+  <aside class="career-sidebar" [class.is-open]="sidebarOpen()" aria-label="Career workspace">
+    <a class="sidebar-brand" routerLink="/" aria-label="SkillPath home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand-text">skillpath<span>.</span></span>
+    </a>
+
+    <nav class="sidebar-nav" aria-label="Career workspace navigation">
+      @for (group of navigationGroups(); track group.label) {
+        <section class="nav-group">
+          <p class="nav-group-label">{{ group.label }}</p>
+          @for (item of group.items; track item.path) {
+            <a
+              [routerLink]="item.path"
+              [routerLinkActiveOptions]="{ exact: !!item.exact }"
+              routerLinkActive="is-active"
+              (click)="closeSidebar()">
+              <sp-icon [name]="item.icon" [size]="17" />
+              <span>{{ item.label }}</span>
+            </a>
+          }
+        </section>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-identity">
+        <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+        <span class="identity-copy">
+          <strong>{{ user()?.full_name ?? 'SkillPath user' }}</strong>
+          <small>{{ user()?.role ?? '' }}</small>
+        </span>
+      </div>
+      <button type="button" class="sidebar-signout" (click)="signOut()" [disabled]="signingOut()">
+        <sp-icon name="logout" [size]="16" />
+        <span>{{ signingOut() ? 'Signing out…' : 'Sign out' }}</span>
+      </button>
+    </div>
+  </aside>
+
+  @if (sidebarOpen()) {
+    <button type="button" class="sidebar-scrim" aria-label="Close navigation" (click)="closeSidebar()"></button>
+  }
+
+  <main class="career-main">
+    <header class="career-topbar">
+      <button
+        type="button"
+        class="icon-button only-narrow"
+        (click)="toggleSidebar()"
+        [attr.aria-expanded]="sidebarOpen()"
+        aria-label="Toggle navigation">
+        <sp-icon name="menu" [size]="20" />
+      </button>
+
+      <div class="topbar-heading">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <span>SkillPath</span>
+          <i aria-hidden="true">/</i>
+          <strong>{{ pageTitle() }}</strong>
+        </nav>
+        @if (pageSubtitle()) {
+          <p class="topbar-subtitle">{{ pageSubtitle() }}</p>
+        }
+      </div>
+
+      <form class="topbar-search" role="search" (ngSubmit)="submitSearch()">
+        <button type="submit" class="search-submit" aria-label="Search the knowledge graph">
+          <sp-icon name="search" [size]="16" />
+        </button>
+        <label class="sr-only" for="career-search">Search skills, occupations and trainings</label>
+        <input
+          id="career-search"
+          name="career-search"
+          type="search"
+          autocomplete="off"
+          placeholder="Search skills, occupations, trainings…"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)" />
+      </form>
+
+      @if (notificationsOpen() || menuOpen()) {
+        <button type="button" class="panel-scrim" aria-label="Close panel" (click)="closePanels()"></button>
+      }
+
+      <div class="topbar-actions">
+        <div class="panel-anchor">
+          <button
+            type="button"
+            class="icon-button"
+            (click)="toggleNotifications()"
+            [attr.aria-expanded]="notificationsOpen()"
+            aria-haspopup="dialog"
+            [attr.aria-label]="'Notifications (' + notifications().length + ')'">
+            <sp-icon name="bell" [size]="19" />
+            @if (notifications().length) {
+              <span class="badge-dot" aria-hidden="true">{{ notifications().length }}</span>
+            }
+          </button>
+
+          @if (notificationsOpen()) {
+            <div class="panel" role="dialog" aria-label="Notifications">
+              <p class="panel-title">Notifications</p>
+              @if (notifications().length === 0) {
+                <p class="panel-empty">You are all caught up.</p>
+              } @else {
+                <ul class="panel-list">
+                  @for (item of notifications(); track item.id) {
+                    <li>
+                      <a [routerLink]="item.link" (click)="closePanels()">
+                        <span class="panel-item-icon"><sp-icon name="alert" [size]="15" /></span>
+                        <span class="panel-item-copy">
+                          <strong>{{ item.title }}</strong>
+                          <small>{{ item.detail }}</small>
+                        </span>
+                      </a>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="panel-anchor">
+          <button
+            type="button"
+            class="avatar-button"
+            (click)="toggleMenu()"
+            [attr.aria-expanded]="menuOpen()"
+            aria-haspopup="dialog"
+            aria-label="Account menu">
+            <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+            <sp-icon name="chevron" [size]="15" />
+          </button>
+
+          @if (menuOpen()) {
+            <div class="panel panel-menu" role="dialog" aria-label="Account menu">
+              <div class="panel-identity">
+                <strong>{{ user()?.full_name }}</strong>
+                <small>{{ user()?.email }}</small>
+              </div>
+              <a [routerLink]="profileRoute()" (click)="closePanels()">
+                <sp-icon [name]="user()?.role === 'ADMIN' ? 'layers' : 'user'" [size]="16" />
+                <span>{{ profileLabel() }}</span>
+              </a>
+              <button type="button" (click)="signOut()" [disabled]="signingOut()">
+                <sp-icon name="logout" [size]="16" />
+                <span>{{ signingOut() ? 'Signing out…' : 'Sign out' }}</span>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="career-content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

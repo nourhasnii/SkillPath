@@ -1,0 +1,425 @@
+<section class="learning-path" aria-labelledby="learning-path-title">
+  <header class="page-head">
+    <div class="page-head-text">
+      <p class="sp-eyebrow">Career intelligence</p>
+      <h1 id="learning-path-title">Parcours optimal</h1>
+      <p class="page-lede">
+        @if (report(); as data) {
+          A prerequisite-ordered roadmap that closes the gap between your profile and
+          <strong>{{ occupationLabel() }}</strong>, built from the courses that actually cover your missing skills.
+        } @else {
+          Build a step-by-step roadmap towards a target occupation, ordered by the real
+          prerequisite chain of the catalogue.
+        }
+      </p>
+    </div>
+
+    @if (report()) {
+      <button
+        type="button"
+        class="sp-btn sp-btn-secondary page-head-action"
+        (click)="regenerate()"
+        [disabled]="loading()">
+        <sp-icon name="refresh" [size]="16" />
+        {{ loading() ? 'Building…' : 'Rebuild path' }}
+      </button>
+    }
+  </header>
+
+  <sp-career-selector (preselected)="onPreselected($event)" (submitted)="onSubmitted($event)" />
+
+  @if (loading()) {
+    <div class="sp-state" role="status">
+      <span class="sp-spinner" aria-hidden="true"></span>
+      <p>Ordering the catalogue against your prerequisites…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error() && !report()) {
+    <div class="sp-state">
+      <sp-icon name="path" [size]="26" />
+      <p>Select a profile and a target occupation to generate a learning path.</p>
+    </div>
+  }
+
+  @if (report(); as data) {
+    <div class="report" aria-live="polite">
+      <label class="duration-constraint">
+        <span>Maximum path duration (hours)</span>
+        <input
+          type="number"
+          min="0"
+          step="1"
+          [value]="maxDurationHours() ?? ''"
+          (change)="applyDurationConstraint($event)"
+          aria-label="Maximum path duration in hours">
+      </label>
+
+      @if (hasNewRecommendations()) {
+        <section class="candidate-section" aria-labelledby="candidate-heading">
+          <div class="section-head">
+            <h2 id="candidate-heading">Candidate learning paths</h2>
+            <span>{{ data.candidates.length }} ranked option{{ data.candidates.length === 1 ? '' : 's' }}</span>
+          </div>
+          <div class="candidate-grid">
+            @for (candidate of data.candidates; track candidate.id) {
+              <button
+                type="button"
+                class="candidate-card"
+                [class.is-selected]="selectedCandidate()?.id === candidate.id"
+                [attr.aria-pressed]="selectedCandidate()?.id === candidate.id"
+                (click)="selectCandidate(candidate)">
+                <span class="candidate-rank">Option {{ candidate.rank }}</span>
+                <strong>
+                  {{ candidate.covered_competencies.length }} of {{ data.competences_manquantes.length }}
+                  missing skills · {{ candidate.training_count }} trainings
+                </strong>
+                <span class="candidate-skills">
+                  Covered: {{ skillsLabel(candidate.covered_competencies) || 'None' }}
+                </span>
+                <span class="candidate-duration">
+                  {{ candidate.duration_available ? candidate.duration_hours + ' h' : 'Duration unavailable' }}
+                </span>
+                <span class="candidate-explanation">{{ candidate.ranking_explanation }}</span>
+                @if (candidate.uncovered_competencies.length) {
+                  <span class="candidate-uncovered">
+                    Uncovered: {{ skillsLabel(candidate.uncovered_competencies) }}
+                  </span>
+                }
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      @if (progressMessage()) {
+        <p class="sp-alert sp-alert-success" role="status">{{ progressMessage() }}</p>
+      }
+      @if (progressError()) {
+        <p class="sp-alert sp-alert-error" role="alert">{{ progressError() }}</p>
+      }
+      @if (pathMessage()) {
+        <p class="sp-alert sp-alert-success" role="status">{{ pathMessage() }}</p>
+      }
+      @if (pathError()) {
+        <p class="sp-alert sp-alert-error" role="alert">{{ pathError() }}</p>
+      }
+
+      @if (hasNewRecommendations()) {
+        <div class="sp-metrics metrics">
+          <article class="sp-metric">
+            <span class="sp-metric-label">Recommended-path progress</span>
+            <span class="sp-metric-value">{{ progression().pourcentage }}%</span>
+            <span class="sp-metric-hint">{{ progression().terminees }} of {{ progression().total }} recommended trainings completed</span>
+          </article>
+          <article class="sp-metric">
+            <span class="sp-metric-label">New recommendations</span>
+            <span class="sp-metric-value">{{ activeSteps().length }}</span>
+            <span class="sp-metric-hint">Prerequisite-valid sequence</span>
+          </article>
+          <article class="sp-metric">
+            <span class="sp-metric-label">Previously completed</span>
+            <span class="sp-metric-value">{{ completedSteps().length }}</span>
+            <span class="sp-metric-hint">Relevant trainings already recorded on your profile</span>
+          </article>
+          <article class="sp-metric">
+            <span class="sp-metric-label">Skills covered</span>
+            <span class="sp-metric-value">{{ (selectedCandidate()?.covered_competencies ?? []).length }}</span>
+            <span class="sp-metric-hint">Missing skills this path can cover</span>
+          </article>
+          <article class="sp-metric">
+            <span class="sp-metric-label">Estimated time left</span>
+            <span class="sp-metric-value">{{ remainingTime() ?? '—' }}</span>
+            <span class="sp-metric-hint">{{ remainingTime() ? 'Sum of recorded durations' : 'Durations are not recorded' }}</span>
+          </article>
+        </div>
+      } @else {
+        <div class="sp-state">
+          <sp-icon name="check" [size]="22" />
+          <p>No new trainings to complete</p>
+        </div>
+      }
+
+      <section class="competency-summary" aria-label="Occupation skill summary">
+        <article>
+          <h2>Already acquired</h2>
+          @if (data.competences_acquises.length) {
+            <p>{{ skillsLabel(data.competences_acquises) }}</p>
+          } @else {
+            <p>No required skills are currently marked as acquired.</p>
+          }
+        </article>
+        <article>
+          <h2>Still missing</h2>
+          @if (data.competences_manquantes.length) {
+            <p>{{ skillsLabel(data.competences_manquantes) }}</p>
+          } @else {
+            <p>All skills required by this occupation are marked as acquired.</p>
+          }
+        </article>
+      </section>
+
+      @if (data.competences_sans_formation.length && hasNewRecommendations()) {
+        <p class="sp-alert sp-alert-info" role="status">
+          {{ data.competences_sans_formation.length }} missing skill{{ data.competences_sans_formation.length === 1 ? '' : 's' }}
+          ({{ missingList() }}) {{ data.competences_sans_formation.length === 1 ? 'has' : 'have' }} no training in the catalogue yet,
+          so no candidate can cover {{ data.competences_sans_formation.length === 1 ? 'it' : 'them' }}.
+        </p>
+      }
+      @if (data.competences_en_cours.length) {
+        <p class="sp-alert sp-alert-info" role="status">
+          A completed training teaches {{ inProgressList() }}, but those skills are still not marked as acquired.
+          Training completion and skill mastery are tracked separately.
+        </p>
+      }
+      @if (hasNewRecommendations() && selectedCandidate()?.uncovered_competencies?.length) {
+        <p class="sp-alert sp-alert-info" role="status">
+          This candidate leaves {{ uncoveredList() }} uncovered.
+        </p>
+      }
+      @if (data.competences_bloquees_prerequis.length) {
+        <p class="sp-alert sp-alert-info" role="status">
+          These missing skills have catalogue trainings blocked by prerequisite cycles or unavailable prerequisites:
+          {{ prerequisiteBlockedList() }}.
+        </p>
+      }
+
+      @if (isPersonal() && hasNewRecommendations()) {
+        <article class="sp-card tracking-card">
+          <div class="tracking-copy">
+            <h2>Progress tracking</h2>
+            @if (canTrackProgress()) {
+              <p>
+                This path is saved in your profile. Tick a training to record it as completed — the
+                change is saved to your profile and survives a refresh.
+              </p>
+            } @else {
+              <p>
+                Save this path to your profile to record progress. Completed trainings are saved
+                on your profile, so a saved path is required before any step can be ticked.
+              </p>
+            }
+          </div>
+          @if (!canTrackProgress()) {
+            <button
+              type="button"
+              class="sp-btn sp-btn-primary"
+              (click)="savePath()"
+              [disabled]="savingPath() || activeSteps().length === 0">
+              <sp-icon [name]="savingPath() ? 'refresh' : 'check'" [size]="16" />
+              {{ savingPath() ? 'Saving…' : 'Save path to my profile' }}
+            </button>
+          }
+        </article>
+      }
+
+      @if (activeSteps().length || completedSteps().length) {
+        @if (activeSteps().length) {
+          <section class="rail-section" aria-labelledby="carousel-title">
+            <div class="section-head">
+              <h2 id="carousel-title">Trainings in this path</h2>
+              <div class="rail-controls">
+                <button type="button" class="rail-button" (click)="scrollRail(-1)" aria-label="Scroll to previous trainings">
+                  <sp-icon name="arrowLeft" [size]="17" />
+                </button>
+                <button type="button" class="rail-button" (click)="scrollRail(1)" aria-label="Scroll to next trainings">
+                  <sp-icon name="arrowRight" [size]="17" />
+                </button>
+              </div>
+            </div>
+
+            <div
+              #rail
+              class="rail"
+              tabindex="0"
+              role="group"
+              aria-label="Learning path trainings, scrollable"
+              (keydown.arrowleft)="scrollRail(-1)"
+              (keydown.arrowright)="scrollRail(1)">
+              @for (step of activeSteps(); track step.formation) {
+                <article class="course-card">
+                  <div class="course-cover">
+                    <sp-course-cover [courseId]="step.formation" [courseType]="step.type" />
+                    <span class="course-phase">{{ phaseName(step.phase) }}</span>
+                  </div>
+                  <div class="course-body">
+                    <h3>{{ courseName(step.label) }}</h3>
+                    <p class="course-meta">{{ format(step) }} · {{ duration(step) }}</p>
+                    @if (step.competences_couvertes.length) {
+                      <ul class="course-skills" role="list">
+                        @for (skill of step.competences_couvertes; track skill) {
+                          <li>{{ courseName(skill) }}</li>
+                        }
+                      </ul>
+                    }
+                    <p class="course-prereq">Prerequisites: {{ prerequisiteText(step) }}</p>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        }
+
+        <section class="roadmap" aria-labelledby="roadmap-title">
+          <h2 id="roadmap-title" class="roadmap-heading">Roadmap</h2>
+
+          @if (activeSteps().length === 0 && data.competences_manquantes.length === 0) {
+            <div class="sp-state">
+              <sp-icon name="check" [size]="24" />
+              <p>Every required skill for this occupation is already declared as acquired — there is nothing left to take.</p>
+            </div>
+          }
+          @if (activeSteps().length === 0 && data.competences_manquantes.length > 0) {
+            <div class="sp-state">
+              <p>{{ noTrainingMessage() }}</p>
+            </div>
+          }
+
+          @for (group of phaseGroups(); track group.phase) {
+            <section class="phase" [class]="'phase phase-' + group.phase" aria-labelledby="phase-{{ group.phase }}">
+              <header class="phase-head">
+                <span class="phase-dot" aria-hidden="true"></span>
+                <h3 id="phase-{{ group.phase }}">{{ group.label }}</h3>
+                <span class="phase-count">{{ group.steps.length }} training{{ group.steps.length === 1 ? '' : 's' }}</span>
+              </header>
+
+              <ol class="step-list">
+                @for (step of group.steps; track step.formation) {
+                  <li class="step" [class.is-complete]="isCompleted(step)">
+                    <div class="step-marker" aria-hidden="true">{{ step.ordre }}</div>
+                    <div class="step-content">
+                      <div class="step-head">
+                        <h4>{{ courseName(step.label) }}</h4>
+                        @if (isCompleted(step)) {
+                          <span class="sp-badge sp-badge-success">Completed</span>
+                        } @else {
+                          <span class="sp-badge sp-badge-neutral">{{ format(step) }}</span>
+                        }
+                        <span class="step-reorder">
+                          <button
+                            type="button"
+                            class="reorder-button"
+                            (click)="moveStep(step.formation, -1)"
+                            [disabled]="!canMoveStep(step.formation, -1)"
+                            [attr.aria-label]="'Move ' + courseName(step.label) + ' earlier'">
+                            ↑
+                          </button>
+                          <button
+                            type="button"
+                            class="reorder-button"
+                            (click)="moveStep(step.formation, 1)"
+                            [disabled]="!canMoveStep(step.formation, 1)"
+                            [attr.aria-label]="'Move ' + courseName(step.label) + ' later'">
+                            ↓
+                          </button>
+                        </span>
+                      </div>
+                      <p class="step-meta">
+                        <sp-icon name="clock" [size]="13" />
+                        {{ duration(step) }}
+                        <span class="step-sep" aria-hidden="true">·</span>
+                        Prerequisites: {{ prerequisiteText(step) }}
+                      </p>
+                      @if (step.competences_couvertes.length) {
+                        <p class="step-skills">
+                          Covers
+                          @for (skill of step.competences_couvertes; track skill; let last = $last) {
+                            <span class="step-skill">{{ courseName(skill) }}</span>{{ last ? '' : ',' }}
+                          }
+                        </p>
+                      }
+
+                      @if (isPersonal()) {
+                        <button
+                          type="button"
+                          class="sp-btn step-action"
+                          [class.sp-btn-secondary]="!isCompleted(step)"
+                          [class.sp-btn-ghost]="isCompleted(step)"
+                          (click)="toggleStep(step)"
+                          [disabled]="savingProgress() || !canTrackProgress()">
+                          <sp-icon [name]="isCompleted(step) ? 'close' : 'check'" [size]="15" />
+                          {{ isCompleted(step) ? 'Mark as not completed' : 'Mark as completed' }}
+                        </button>
+                      }
+                    </div>
+                  </li>
+                }
+              </ol>
+            </section>
+          }
+
+          @if (completedSteps().length) {
+            <section class="phase phase-terminee" aria-labelledby="phase-terminee">
+              <header class="phase-head">
+                <span class="phase-dot" aria-hidden="true"></span>
+                <h3 id="phase-terminee">Already completed before this recommendation</h3>
+                <span class="phase-count">{{ completedSteps().length }} training{{ completedSteps().length === 1 ? '' : 's' }}</span>
+              </header>
+              <p class="phase-description">
+                These trainings were already recorded as completed. They are separate from new recommendations.
+                Completed trainings add to your skills when they teach them.
+              </p>
+              <ol class="step-list">
+                @for (step of completedSteps(); track step.formation) {
+                  <li class="step is-complete">
+                    <div class="step-marker" aria-hidden="true">
+                      <sp-icon name="check" [size]="13" />
+                    </div>
+                    <div class="step-content">
+                      <div class="step-head">
+                        <h4>{{ courseName(step.label) }}</h4>
+                        <span class="sp-badge sp-badge-success">Completed</span>
+                      </div>
+                      <p class="step-meta">
+                        <sp-icon name="clock" [size]="13" />
+                        {{ duration(step) }}
+                      </p>
+                      @if (step.competences_couvertes.length) {
+                        <p class="step-skills">
+                          Covers
+                          @for (skill of step.competences_couvertes; track skill; let last = $last) {
+                            <span class="step-skill">{{ courseName(skill) }}</span>{{ last ? '' : ',' }}
+                          }
+                        </p>
+                      }
+                    </div>
+                  </li>
+                }
+              </ol>
+            </section>
+          }
+        </section>
+
+        <div class="report-footer">
+          <a class="sp-btn sp-btn-ghost" routerLink="/skill-gap">
+            <sp-icon name="target" [size]="16" />
+            Review the skill gap
+          </a>
+          <a class="sp-btn sp-btn-ghost" routerLink="/knowledge-graph">
+            <sp-icon name="graph" [size]="16" />
+            Explore the knowledge graph
+          </a>
+        </div>
+      } @else if (data.competences_manquantes.length === 0) {
+        <div class="sp-state">
+          <sp-icon name="check" [size]="24" />
+          <p>No training is required: your profile already covers every skill this occupation declares.</p>
+        </div>
+      } @else if (data.max_duration_hours !== null) {
+        <div class="sp-state">
+          <sp-icon name="path" [size]="24" />
+          <p>No prerequisite-valid candidate fits the {{ data.max_duration_hours }} hour limit.</p>
+        </div>
+      } @else {
+        <div class="sp-state">
+          <sp-icon name="path" [size]="24" />
+          <p>{{ noTrainingMessage() }}</p>
+        </div>
+      }
+    </div>
+  }
+</section>

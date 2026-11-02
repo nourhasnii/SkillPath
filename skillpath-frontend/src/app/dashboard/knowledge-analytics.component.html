@@ -1,0 +1,129 @@
+<section class="analytics">
+  <header class="analytics-heading">
+    <div>
+      <p class="eyebrow">SEMANTIC ANALYTICS</p>
+      <h2>Knowledge Analytics</h2>
+      <p class="analytics-description">
+        Live distributions of the RDF individuals stored in the Fuseki repository.
+      </p>
+    </div>
+    <button class="button-secondary" type="button" (click)="refresh()" [disabled]="loading()">
+      {{ loading() ? 'Refreshing…' : 'Refresh' }}
+    </button>
+  </header>
+
+  @if (loading() && !loaded()) {
+    <div class="analytics-grid" role="status" aria-label="Loading knowledge analytics">
+      @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+        <article class="analytics-card analytics-skeleton"></article>
+      }
+    </div>
+  } @else if (errorMessage()) {
+    <div class="state-card error-state" role="alert">
+      <strong>Knowledge analytics unavailable</strong>
+      <p>{{ errorMessage() }}</p>
+      <button class="button-secondary" type="button" (click)="refresh()">Retry</button>
+    </div>
+  } @else {
+    <div class="analytics-grid">
+      <article class="analytics-card">
+        <header class="chart-head">
+          <h3>Competency distribution</h3>
+          <p>Technical versus transversal competencies declared in the ontology.</p>
+        </header>
+        @if (competencySegments().length) {
+          <sp-distribution-chart
+            [segments]="competencySegments()"
+            [size]="164"
+            [thickness]="15"
+            unit="competencies"
+            [accessibleLabel]="competencyLabel()" />
+        } @else {
+          <p class="chart-empty">No competency is declared in the repository yet.</p>
+        }
+      </article>
+
+      <article class="analytics-card">
+        <header class="chart-head">
+          <h3>User profiles distribution</h3>
+          <p>Students and professionals, each counted once by their RDF type.</p>
+        </header>
+        @if (profileSegments().length) {
+          <sp-distribution-chart
+            [segments]="profileSegments()"
+            [size]="164"
+            [thickness]="15"
+            unit="profiles"
+            [accessibleLabel]="profileLabel()" />
+        } @else {
+          <p class="chart-empty">No user profile is registered in the repository yet.</p>
+        }
+      </article>
+
+      <article class="analytics-card">
+        <header class="chart-head">
+          <h3>Trainings distribution</h3>
+          <p>Online versus in-person trainings declared as Formation subtypes.</p>
+        </header>
+        @if (trainingSegments().length) {
+          <sp-distribution-chart
+            [segments]="trainingSegments()"
+            [size]="164"
+            [thickness]="15"
+            unit="trainings"
+            [accessibleLabel]="trainingLabel()" />
+        } @else {
+          <p class="chart-empty">No training is declared in the catalogue yet.</p>
+        }
+      </article>
+
+      <article class="analytics-card span-full">
+        <header class="chart-head">
+          <h3>Occupations by job family</h3>
+          <p>Occupations attached to each job family through the ontology relationship.</p>
+        </header>
+        @if (occupationFamilies().length) {
+          <ul class="bar-list" role="list">
+            @for (family of occupationFamilies(); track family.key) {
+              <li class="bar-row">
+                <div class="bar-head">
+                  <span class="bar-label" [title]="family.label">{{ family.label }}</span>
+                  <span class="bar-value">{{ family.count }}</span>
+                </div>
+                <div class="bar-track" role="img" [attr.aria-label]="describe(family.label, family.count, 'occupations')">
+                  <span class="bar-fill" [style.width.%]="barWidth(family.count, occupationPeak())"></span>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="chart-empty">No occupation is declared in the repository yet.</p>
+        }
+      </article>
+
+      <article class="analytics-card span-full">
+        <header class="chart-head">
+          <h3>Knowledge repository overview</h3>
+          <p>Number of RDF individuals per ontology root class — individuals, not class definitions.</p>
+        </header>
+        @if (repositorySegments().length) {
+          <ul class="bar-list bar-list--compact" role="list">
+            @for (entry of repositorySegments(); track entry.key) {
+              <li class="bar-row">
+                <div class="bar-head">
+                  <span class="bar-label" [title]="entry.label">{{ entry.label }}</span>
+                  <span class="bar-value">{{ entry.value }}</span>
+                </div>
+                <div class="bar-track" role="img" [attr.aria-label]="describe(entry.label, entry.value, 'individuals')">
+                  <span class="bar-fill" [style.width.%]="barWidth(entry.value, repositoryPeak())"></span>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="chart-empty">The repository does not expose any individual yet.</p>
+        }
+      </article>
+    </div>
+  }
+</section>

@@ -1,0 +1,238 @@
+<section class="evaluations" aria-labelledby="evaluations-title">
+  <header class="page-head">
+    <div class="page-head-text">
+      <p class="sp-eyebrow">Career intelligence</p>
+      <h1 id="evaluations-title">My Evaluations</h1>
+      <p class="page-lede">
+        An automatic assessment of your readiness for your target occupation, calculated from the
+        skills you have actually acquired — no questionnaire, no manual grading.
+      </p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="sp-state" role="status">
+      <span class="sp-spinner" aria-hidden="true"></span>
+      <p>Loading your evaluations…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="sp-alert sp-alert-error" role="alert">{{ error() }}</p>
+  }
+
+  <article class="sp-card sp-card-pad assessment" aria-labelledby="assessment-title">
+    <div class="sp-card-heading">
+      <div>
+        <p class="sp-eyebrow">Career assessment</p>
+        <h2 id="assessment-title">Career Assessment — Automatically evaluated</h2>
+        @if (targetOccupation()) {
+          <p>Based on the required skills for <strong>{{ occupationName() }}</strong>.</p>
+        } @else {
+          <p>Based on the required skills of your target occupation.</p>
+        }
+      </div>
+      @if (showAssessment()) {
+        <div class="level-badge" title="Overall readiness level">
+          <span class="level-badge-label">My level</span>
+          <span [class]="levelBadgeClass()">{{ levelText() }}</span>
+        </div>
+      }
+    </div>
+
+    @if (!targetOccupation()) {
+      <div class="sp-empty">
+        <sp-icon name="target" [size]="22" />
+        <div>
+          <strong>No target occupation selected</strong>
+          <p>
+            Choose a target occupation first — the automatic evaluation compares your profile with
+            the skills that occupation requires.
+          </p>
+          <a class="sp-btn sp-btn-primary empty-action" routerLink="/account/profile">
+            Choose an occupation <sp-icon name="arrowRight" [size]="15" />
+          </a>
+        </div>
+      </div>
+    } @else if (noRequired()) {
+      <div class="sp-empty">
+        <sp-icon name="alert" [size]="22" />
+        <div>
+          <strong>No required skills defined</strong>
+          <p>{{ notice() }}</p>
+        </div>
+      </div>
+    } @else if (showAssessment()) {
+      <div class="assessment-body">
+        <sp-ring-chart
+          [value]="score() ?? 0"
+          [tone]="scoreTone()"
+          [size]="168"
+          [thickness]="14"
+          caption="Career readiness"
+          [accessibleLabel]="'Career readiness for ' + occupationName() + ': ' + (score() ?? 0) + ' percent'" />
+
+        <div class="assessment-stats">
+          <div class="as-item as-mastered">
+            <span class="as-value">{{ masteredCount() }}</span>
+            <span class="as-label">Mastered skills</span>
+          </div>
+          <div class="as-item as-missing">
+            <span class="as-value">{{ missingCount() }}</span>
+            <span class="as-label">Skills to improve</span>
+          </div>
+          @if (evaluationDate(); as date) {
+            <div class="as-item">
+              <span class="as-value">{{ formatDate(date) }}</span>
+              <span class="as-label">Last evaluated</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (requiredLevel()) {
+        <div class="level-compare">
+          <div class="level-chip">
+            <span class="level-chip-label">Required level</span>
+            <span [class]="requiredLevelBadgeClass()">{{ requiredLevelText() }}</span>
+          </div>
+          <sp-icon name="arrowRight" [size]="18" />
+          <div class="level-chip">
+            <span class="level-chip-label">Your level</span>
+            <span [class]="levelBadgeClass()">{{ levelText() }}</span>
+          </div>
+        </div>
+      }
+
+      @if (diagnostic(); as why) {
+        <section class="diagnostic" aria-labelledby="diagnostic-title">
+            <div>
+              <p class="sp-eyebrow">Assessment details</p>
+              <h3 id="diagnostic-title">Why this result</h3>
+            </div>
+
+            @if (why.requiredLevelGap) {
+              <p class="required-level-gap">{{ why.requiredLevelGap }}</p>
+            }
+
+            <div class="diagnostic-skill-groups">
+              <section aria-labelledby="strengths-title">
+                <h4 id="strengths-title">Strengths</h4>
+                @if (why.strengths.length) {
+                  <div class="diagnostic-chips strengths">
+                    @for (competence of why.strengths; track competence) {
+                      <span class="diagnostic-chip">{{ competence }}</span>
+                    }
+                  </div>
+                } @else {
+                  <p class="diagnostic-empty">No required competences mastered yet.</p>
+                }
+              </section>
+
+              <section aria-labelledby="gaps-title">
+                <h4 id="gaps-title">Gaps</h4>
+                @if (why.gaps.length) {
+                  <div class="diagnostic-chips gaps">
+                    @for (competence of why.gaps; track competence) {
+                      <span class="diagnostic-chip">{{ competence }}</span>
+                    }
+                  </div>
+                } @else {
+                  <p class="diagnostic-empty">No remaining skill gaps.</p>
+                }
+              </section>
+            </div>
+
+            <p class="level-reason">{{ why.levelReason }}</p>
+
+            @if (why.nextLevel) {
+              <p class="next-level">
+                To reach {{ why.nextLevel }} you need {{ why.competencesToNextLevel }}
+                more {{ why.competencesToNextLevel === 1 ? 'competence' : 'competences' }}.
+              </p>
+            }
+
+            <section class="suggested-steps" aria-labelledby="suggested-steps-title">
+              <h4 id="suggested-steps-title">Suggested next steps</h4>
+              @if (why.suggestions.length) {
+                <div class="suggestion-list">
+                  @for (suggestion of why.suggestions; track suggestion.competence) {
+                    <article class="suggestion">
+                      <div class="suggestion-heading">
+                        <h5>{{ suggestion.competence }}</h5>
+                        <a class="sp-btn sp-btn-secondary" routerLink="/learning-path">
+                          See in Learning Path <sp-icon name="arrowRight" [size]="15" />
+                        </a>
+                      </div>
+                      @if (suggestion.trainings.length) {
+                        <ul>
+                          @for (training of suggestion.trainings; track training.id) {
+                            <li>
+                              <span class="suggestion-name">{{ training.name }}</span>
+                              <span class="suggestion-meta">
+                                {{ training.durationHours === null ? 'Duration n/a' : training.durationHours + 'h' }}
+                              </span>
+                              @if (training.modules.length) {
+                                <ul class="module-list">
+                                  @for (module of training.modules; track module.id) {
+                                    <li>
+                                      <span>{{ module.name }}</span>
+                                      <span class="suggestion-meta">
+                                        {{ module.durationHours === null ? 'Duration n/a' : module.durationHours + 'h' }}
+                                      </span>
+                                    </li>
+                                  }
+                                </ul>
+                              }
+                            </li>
+                          }
+                        </ul>
+                      } @else {
+                        <p class="diagnostic-empty">No training currently teaches this competence.</p>
+                      }
+                    </article>
+                  }
+                </div>
+              } @else {
+                <p class="diagnostic-empty">
+                  {{ why.gaps.length ? 'No catalogue trainings currently teach these competences.' : 'You have covered every required competence.' }}
+                </p>
+              }
+            </section>
+        </section>
+      }
+    } @else {
+      <div class="sp-empty">
+        <sp-icon name="sparkle" [size]="22" />
+        <div>
+          <strong>Not evaluated yet</strong>
+          <p>
+            Run your first automatic assessment to see your career readiness for
+            <strong>{{ occupationName() }}</strong>.
+          </p>
+        </div>
+      </div>
+    }
+
+    @if (targetOccupation()) {
+      <div class="assessment-foot">
+        <button
+          type="button"
+          class="sp-btn sp-btn-primary"
+          (click)="evaluate()"
+          [disabled]="evaluating()">
+          <sp-icon name="refresh" [size]="16" />
+          {{
+            evaluating()
+              ? 'Evaluating…'
+              : (evaluated() ? 'Evaluate my skills again' : 'Evaluate my skills')
+          }}
+        </button>
+        <p class="assessment-note">
+          Readiness is a percentage of the required skills you have acquired. It is not a
+          grade and does not measure an individual skill.
+        </p>
+      </div>
+    }
+  </article>
+</section>

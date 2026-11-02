@@ -1,0 +1,124 @@
+<section class="dashboard-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">{{ isReadOnly() ? 'PATH HISTORY' : 'REPOSITORY' }}</p>
+      <h1>{{ isReadOnly() ? 'Generated paths history' : config?.label }}</h1>
+      <p class="page-description">
+        @if (isReadOnly()) {
+          Existing Parcours records, shown in read-only mode.
+        } @else {
+          Browse and manage {{ config?.label?.toLowerCase() }} from the knowledge graph.
+        }
+      </p>
+    </div>
+    @if (!isReadOnly() && config; as entity) {
+      <a class="button-primary" [routerLink]="['/dashboard', entity.slug, 'new']">
+        <span aria-hidden="true">＋</span> Add {{ entity.singular }}
+      </a>
+    }
+  </header>
+
+  <div class="toolbar">
+    <form class="search-control" (ngSubmit)="load()">
+      <span aria-hidden="true">⌕</span>
+      <input
+        aria-label="Search entities"
+        placeholder="Search by name or identifier"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        name="search">
+      <button type="submit" class="search-submit">Search</button>
+    </form>
+    @if (classOptions().length > 0) {
+      <select class="filter-select" aria-label="Filter by class" [ngModel]="classFilter()" (ngModelChange)="classFilter.set($event)" name="classFilter">
+        <option value="">All classes</option>
+        @for (className of classOptions(); track className) {
+          <option [value]="className">{{ displayName(className) }}</option>
+        }
+      </select>
+    }
+    @if (config?.relations?.length) {
+      <select class="filter-select" aria-label="Choose a relation filter" [ngModel]="relationFilterKey()" (ngModelChange)="changeRelationFilter($event)" name="relationKey">
+        <option value="">All relations</option>
+        @for (relation of config?.relations ?? []; track relation.key) {
+          <option [value]="relation.key">{{ relation.label }}</option>
+        }
+      </select>
+      @if (relationFilterKey()) {
+        <select class="filter-select" aria-label="Filter by related entity" [ngModel]="relationFilterValue()" (ngModelChange)="relationFilterValue.set($event)" name="relationValue" [disabled]="filterLoading()">
+          <option value="">All related entities</option>
+          @for (choice of relationChoices(); track choice.id) {
+            <option [value]="choice.id">{{ choiceLabel(choice) }}</option>
+          }
+        </select>
+      }
+    }
+  </div>
+
+  @if (errorMessage()) {
+    <div class="state-card error-state" role="alert">
+      <strong>Could not load this view</strong>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  } @else if (loading()) {
+    <div class="entity-table-wrap" role="status" aria-label="Loading entities">
+      @for (placeholder of [1, 2, 3, 4, 5]; track placeholder) {
+        <div class="table-skeleton"></div>
+      }
+    </div>
+  } @else if (filteredRows().length === 0) {
+    <div class="state-card">
+      <span class="empty-state-icon" aria-hidden="true">⌕</span>
+      <strong>No {{ config?.label?.toLowerCase() }} found</strong>
+      <p>
+        @if (rows().length === 0) {
+          The ontology currently has no matching individuals.
+        } @else {
+          No records match the selected filters. Adjust the filters and try again.
+        }
+      </p>
+    </div>
+  } @else {
+    <div class="entity-table-wrap">
+      <table class="entity-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Identifier</th>
+            <th>Class</th>
+            <th><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of filteredRows(); track row.item.id) {
+            <tr>
+              <td>
+                <div class="entity-name">
+                  <span class="entity-avatar">{{ displayName(row.item.label).slice(0, 1).toUpperCase() }}</span>
+                  {{ displayName(row.item.label) }}
+                </div>
+              </td>
+              <td class="entity-id">{{ displayName(row.item.id) }}</td>
+              <td>
+                @if (row.item.class) {
+                  <span class="class-badge">{{ displayName(row.item.class) }}</span>
+                } @else {
+                  <span class="muted-note">—</span>
+                }
+              </td>
+              <td>
+                <div class="table-actions">
+                  <a [routerLink]="detailLink(row.item.id)">View</a>
+                  @if (!isReadOnly() && config; as entity) {
+                    <a [routerLink]="editLink(row.item.id)">Edit</a>
+                    <button type="button" (click)="deleteEntity(row)">Delete</button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

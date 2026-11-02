@@ -1,0 +1,123 @@
+:host { display: block; }
+
+.evaluations { display: grid; gap: 22px; }
+
+/* ---- page header ------------------------------------------------- */
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.page-head-text { min-width: 0; }
+.page-head h1 { margin: 6px 0 0; color: var(--sp-ink-900); font-size: clamp(26px, 3vw, 34px); font-weight: 750; letter-spacing: -1.2px; }
+.page-lede { max-width: 660px; margin: 10px 0 0; color: var(--sp-ink-500); font-size: 14px; line-height: 1.65; }
+
+/* ---- loading ----------------------------------------------------- */
+.sp-state sp-icon { color: var(--sp-violet-500); }
+
+/* ---- assessment card --------------------------------------------- */
+.assessment { display: grid; gap: 22px; }
+
+.level-badge { display: grid; justify-items: end; gap: 6px; }
+.level-badge-label {
+  color: var(--sp-ink-400);
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+
+.assessment-body {
+  display: grid;
+  grid-template-columns: minmax(168px, 200px) minmax(0, 1fr);
+  align-items: center;
+  gap: 26px;
+}
+
+.assessment-stats { display: grid; gap: 14px; }
+
+.as-item {
+  display: grid;
+  gap: 3px;
+  padding: 14px 16px;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius-md);
+  background: var(--sp-surface-muted);
+}
+
+.as-value { color: var(--sp-ink-900); font-size: 26px; font-weight: 750; letter-spacing: -1px; line-height: 1.1; }
+.as-label { color: var(--sp-ink-500); font-size: 12px; font-weight: 600; }
+.as-mastered { border-color: var(--sp-emerald-100); }
+.as-missing { border-color: var(--sp-rose-100); }
+
+/* ---- required vs your level -------------------------------------- */
+.level-compare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius-md);
+  background: var(--sp-surface-muted);
+}
+
+.level-chip { display: grid; gap: 6px; }
+.level-chip-label {
+  color: var(--sp-ink-400);
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+
+.level-compare sp-icon { color: var(--sp-ink-400); }
+
+/* ---- result diagnostic ------------------------------------------- */
+.diagnostic {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius-md);
+}
+
+.diagnostic h3 { margin: 4px 0 0; color: var(--sp-ink-900); font-size: 18px; }
+.diagnostic h4 { margin: 0 0 9px; color: var(--sp-ink-700); font-size: 13px; }
+.diagnostic h5 { margin: 0; color: var(--sp-ink-900); font-size: 13px; }
+.diagnostic-skill-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.diagnostic-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.diagnostic-chip { padding: 6px 10px; border: 1px solid; border-radius: 999px; font-size: 12px; font-weight: 650; }
+.strengths .diagnostic-chip { border-color: var(--sp-emerald-100); color: #0B7A5A; background: #ECFDF5; }
+.gaps .diagnostic-chip { border-color: #FED7AA; color: #B45309; background: #FFF7ED; }
+.diagnostic-empty,
+.level-reason,
+.next-level,
+.required-level-gap { margin: 0; color: var(--sp-ink-600); font-size: 13px; line-height: 1.6; }
+.required-level-gap { padding: 10px 12px; border-radius: var(--sp-radius-sm); background: var(--sp-surface-muted); font-weight: 650; }
+.next-level { color: var(--sp-ink-900); font-weight: 700; }
+.suggested-steps { display: grid; gap: 12px; }
+.suggested-steps > h4 { margin-bottom: 0; }
+.suggestion-list { display: grid; gap: 12px; }
+.suggestion { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--sp-line); border-radius: var(--sp-radius-md); }
+.suggestion-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.suggestion ul { display: grid; gap: 8px; margin: 0; padding-left: 18px; color: var(--sp-ink-700); font-size: 12px; }
+.suggestion li { padding-left: 2px; }
+.suggestion-name { font-weight: 650; }
+.suggestion-meta { color: var(--sp-ink-400); white-space: nowrap; }
+.module-list { margin-top: 7px !important; color: var(--sp-ink-500) !important; }
+
+/* ---- footer ------------------------------------------------------ */
+.assessment-foot { display: grid; gap: 10px; justify-items: start; }
+.assessment-note { margin: 0; max-width: 560px; color: var(--sp-ink-400); font-size: 11.5px; line-height: 1.6; }
+.empty-action { margin-top: 12px; }
+
+@media (max-width: 780px) {
+  .assessment-body { grid-template-columns: 1fr; justify-items: center; }
+  .assessment-stats { width: 100%; }
+  .diagnostic-skill-groups { grid-template-columns: 1fr; }
+  .suggestion-heading { align-items: flex-start; flex-direction: column; }
+}

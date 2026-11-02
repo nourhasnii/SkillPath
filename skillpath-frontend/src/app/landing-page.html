@@ -1,0 +1,304 @@
+<div class="site-shell">
+  <header class="nav-shell">
+    <nav class="nav container" aria-label="Main navigation">
+      <button class="brand" type="button" (click)="scrollTo('top')" aria-label="SkillPath home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>skillpath</span>
+      </button>
+      <div class="desktop-nav">
+        <button type="button" (click)="scrollTo('how-it-works')">How it works</button>
+        <button type="button" routerLink="/knowledge-graph">Knowledge graph</button>
+        <button type="button" (click)="scrollTo('careers')">Careers</button>
+      </div>
+      <div class="nav-actions">
+        <a class="login-link" routerLink="/login">Log in</a>
+        <a class="button button-small button-dark" routerLink="/register">Get started <span>↗</span></a>
+        <button class="menu-toggle" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-label="Toggle navigation menu"><span></span><span></span></button>
+      </div>
+    </nav>
+    @if (menuOpen()) {
+      <div class="mobile-menu">
+        <button type="button" (click)="scrollTo('how-it-works')">How it works <span>↗</span></button>
+        <button type="button" routerLink="/knowledge-graph">Knowledge graph <span>↗</span></button>
+        <button type="button" (click)="scrollTo('careers')">Careers <span>↗</span></button>
+        <a routerLink="/register">Get started <span>↗</span></a>
+      </div>
+    }
+  </header>
+
+  <main id="top">
+    <section class="hero container section-grid">
+      <div class="hero-copy reveal">
+        <div class="eyebrow"><span class="eyebrow-star">✦</span> Semantic skill intelligence</div>
+        <h1>Discover the skills behind your <em>next career.</em></h1>
+        <p class="hero-lede">SkillPath connects skills, career goals, prerequisites and learning opportunities through a semantic knowledge graph.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" routerLink="/skill-gap">Analyze a profile <span>↗</span></a>
+          <a class="button button-quiet" routerLink="/knowledge-graph">Explore the graph <span>↗</span></a>
+        </div>
+        <div class="protocol-line"><span class="protocol-dot"></span> OWL <b>•</b> RDF <b>•</b> SPARQL <b>•</b> Semantic reasoning</div>
+      </div>
+      <div class="hero-visual reveal reveal-delay">
+        <div class="graph-window">
+          <div class="window-top">
+            <span class="window-label">LIVE KNOWLEDGE GRAPH</span>
+            <span class="live-status"><i></i> live data</span>
+          </div>
+          @if (graphLoading()) {
+            <div class="live-entity-list" role="status">Loading graph data…</div>
+          } @else if (graphError()) {
+            <div class="live-entity-list live-error" role="alert">{{ graphError() }}</div>
+          } @else if (graphNodes().length > 0) {
+            <div class="live-entity-list">
+              @for (node of graphNodes().slice(0, 5); track node.id) {
+                <div class="live-entity-row">
+                  <span class="live-entity-dot"></span>
+                  <strong>{{ displayName(node.label) }}</strong>
+                  <small>{{ node.type }}</small>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="live-entity-list">No connected graph entities are available yet.</div>
+          }
+          <div class="graph-foot">
+            @if (graph(); as graphData) {
+              <span>{{ graphData.nodes.length }} entities</span><span class="graph-count">{{ graphEdgeCount() }} relationships</span>
+            } @else {
+              <span>Graph statistics unavailable</span>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tech-strip">
+      <div class="container tech-inner">
+        <span class="tech-intro">Built on semantic foundations</span>
+        <span>OWL</span><span>RDF</span><span>SPARQL</span><span>Knowledge graph</span>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section container process-section">
+      <div class="section-heading reveal">
+        <div><div class="kicker">THE PATH, MADE VISIBLE</div><h2>From your skills to your <em>next career.</em></h2></div>
+        <p>SkillPath transforms a profile into a semantic career path you can understand and act on.</p>
+      </div>
+      <div class="process-flow">
+        <div class="process-step reveal"><span class="step-number">01</span><span class="step-icon">◎</span><h3>Your profile</h3><p>Map what you know today.</p></div><span class="flow-arrow">→</span>
+        <div class="process-step reveal"><span class="step-number">02</span><span class="step-icon">⌁</span><h3>Semantic analysis</h3><p>Connect skills to meaning.</p></div><span class="flow-arrow">→</span>
+        <div class="process-step reveal"><span class="step-number">03</span><span class="step-icon">◌</span><h3>Skill gap</h3><p>See what stands between.</p></div><span class="flow-arrow">→</span>
+        <div class="process-step reveal"><span class="step-number">04</span><span class="step-icon">∴</span><h3>Prerequisites</h3><p>Understand what comes first.</p></div><span class="flow-arrow">→</span>
+        <div class="process-step process-step-final reveal"><span class="step-number">05</span><span class="step-icon">↗</span><h3>Learning path</h3><p>Move toward your role.</p></div>
+      </div>
+    </section>
+
+    <section class="section feature-section container">
+      <div class="section-heading reveal">
+        <div><div class="kicker">ONE GRAPH. MANY ANSWERS.</div><h2>Explore the <em>SkillPath repository.</em></h2></div>
+        <div class="carousel-controls">
+          <button type="button" (click)="previousFeature()" aria-label="Previous feature">←</button>
+          <button type="button" (click)="nextFeature()" aria-label="Next feature">→</button>
+        </div>
+      </div>
+      <div class="feature-carousel" tabindex="0" role="region" aria-label="Feature carousel">
+        <div class="feature-copy reveal">
+          <div class="kicker">{{ features[activeFeature()].eyebrow }}</div>
+          <h3>{{ features[activeFeature()].title }}</h3>
+          <p>{{ features[activeFeature()].description }}</p>
+          <a class="text-link" routerLink="/login">Open the repository <span>↗</span></a>
+        </div>
+        <div class="feature-preview reveal reveal-delay">
+          <div class="preview-head">
+            <span>{{ featureItemsTitle() }}</span>
+            @if (!repositoryLoading()) {
+              <b>{{ featureItems().length }} records</b>
+            }
+          </div>
+          @if (repositoryLoading()) {
+            <p class="live-entity-list" role="status">Loading repository individuals…</p>
+          } @else if (repositoryError()) {
+            <p class="live-entity-list live-error" role="alert">{{ repositoryError() }}</p>
+          } @else if (featureItems().length > 0) {
+            <div class="repository-preview-list">
+              @for (item of featureItems().slice(0, 5); track item.id) {
+                <div class="repository-preview-item">
+                  <span class="skill-check">✓</span>
+                  <span>{{ displayName(item.label) }}</span>
+                  <small>{{ displayName(item.id) }}</small>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="live-entity-list">No individuals are available for this repository section.</p>
+          }
+        </div>
+      </div>
+      <div class="carousel-dots" role="tablist" aria-label="Feature slides">
+        @for (feature of features; track feature.kind; let i = $index) {
+          <button type="button" role="tab" [attr.aria-selected]="activeFeature() === i" [class.active]="activeFeature() === i" (click)="setFeature(i)" [attr.aria-label]="'Show ' + feature.title"></button>
+        }
+      </div>
+    </section>
+
+    <section id="demo" class="section demo-section container">
+      <div class="section-heading reveal">
+        <div><div class="kicker">THE LIVE REPOSITORY</div><h2>Built from <em>real individuals.</em></h2></div>
+        <p>Counts below are retrieved from the SkillPath API and reflect the current catalogue.</p>
+      </div>
+      @if (statsLoading()) {
+        <p class="status" role="status">Loading repository statistics…</p>
+      } @else if (statsError()) {
+        <p class="error" role="alert">{{ statsError() }}</p>
+      } @else if (stats(); as totals) {
+        <div class="live-stats-grid">
+          <div><span>Skills</span><strong>{{ totals.competences }}</strong></div>
+          <div><span>Occupations</span><strong>{{ totals.metiers }}</strong></div>
+          <div><span>Trainings</span><strong>{{ totals.formations }}</strong></div>
+          <div><span>Profiles</span><strong>{{ totals.profils }}</strong></div>
+        </div>
+      }
+      <a class="button button-dark" routerLink="/login">Manage the repository <span>↗</span></a>
+    </section>
+
+    @if (cataloguePreview(); as preview) {
+      <section class="section catalogue-preview-section container">
+        <div class="section-heading reveal">
+          <div><div class="kicker">LEARN FROM THE CATALOGUE</div><h2>Training grounded in <em>real skills.</em></h2></div>
+          <p>Explore trainings and the skills connected to them in the SkillPath catalogue.</p>
+        </div>
+        <div class="catalogue-preview-stats">
+          <article><span>Skills</span><strong>{{ preview.stats.competences }}</strong></article>
+          <article><span>Trainings</span><strong>{{ preview.stats.formations }}</strong></article>
+          <article><span>Occupations</span><strong>{{ preview.stats.metiers }}</strong></article>
+        </div>
+        <div class="catalogue-preview-grid">
+          @for (training of preview.trainings; track training.id) {
+            <article class="catalogue-preview-card">
+              <div class="catalogue-preview-meta">
+                <span>{{ trainingType(training) }}</span>
+                @if (training.duree_heures !== null) {
+                  <small>{{ training.duree_heures }} h</small>
+                }
+              </div>
+              <h3>{{ displayName(training.nom) }}</h3>
+              <div class="catalogue-preview-chips">
+                @for (competence of training.competences_enseignees; track competence.id) {
+                  <span>{{ displayName(competence.label) }}</span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+        <a class="button button-primary catalogue-preview-link" routerLink="/catalogue">View the full catalogue <span>↗</span></a>
+      </section>
+    }
+
+    <section id="knowledge-graph" class="dark-section graph-showcase">
+      <div class="container">
+        <div class="dark-heading reveal">
+          <div><div class="kicker">THE INTELLIGENCE LAYER</div><h2>Powered by a <em>semantic</em><br>knowledge graph.</h2></div>
+          <p>Explore the entities and edges returned by the live SkillPath graph endpoint.</p>
+        </div>
+        @if (graphLoading()) {
+          <p class="graph-live-state" role="status">Loading graph entities…</p>
+        } @else if (graphError()) {
+          <p class="graph-live-state" role="alert">{{ graphError() }}</p>
+        } @else if (graphNodes().length > 0) {
+          <div class="live-graph-grid">
+            @for (node of graphNodes(); track node.id) {
+              <button class="live-graph-node" type="button" (mouseenter)="setGraphNode(node.id)" (focus)="setGraphNode(node.id)">
+                <span>{{ displayName(node.label) }}</span>
+                <small>{{ node.type }} · {{ entityEdges(node.id) }} relationships</small>
+              </button>
+            }
+          </div>
+          <p class="graph-summary">
+            @if (selectedGraphNode()) {
+              {{ displayName(selectedGraphNode()) }} is connected to {{ entityEdges(selectedGraphNode()) }} graph relationships.
+            } @else {
+              {{ graph()?.nodes?.length ?? 0 }} entities and {{ graphEdgeCount() }} relationships are currently connected.
+            }
+          </p>
+        } @else {
+          <p class="graph-live-state">The graph currently has no connected individuals.</p>
+        }
+      </div>
+    </section>
+
+    <section id="search" class="section search-section container">
+      <div class="section-heading centered reveal">
+        <div><div class="kicker">EXPLORE THE ANALYSES</div><h2>Start with a <em>real question.</em></h2></div>
+        <p>Use the live skill-gap, learning-path and graph views to explore how everything connects.</p>
+      </div>
+      <div class="analysis-links">
+        <a class="analysis-link" routerLink="/skill-gap"><strong>Skill Gap</strong><span>Compare a real profile and occupation ↗</span></a>
+        <a class="analysis-link" routerLink="/learning-path"><strong>Learning Path</strong><span>Build steps from real prerequisites ↗</span></a>
+        <a class="analysis-link" routerLink="/knowledge-graph"><strong>Knowledge Graph</strong><span>Explore how everything connects ↗</span></a>
+      </div>
+    </section>
+
+    <section id="careers" class="section occupations-section">
+      <div class="container">
+        <div class="section-heading reveal">
+          <div><div class="kicker">FIND YOUR DIRECTION</div><h2>Explore <em>occupations.</em></h2></div>
+        </div>
+        @if (repositoryLoading()) {
+          <p class="status" role="status">Loading occupations…</p>
+        } @else if (repositoryError()) {
+          <p class="error" role="alert">{{ repositoryError() }}</p>
+        } @else if (occupations().length > 0) {
+          <div class="occupation-rail">
+            @for (occupation of occupations(); track occupation.id) {
+              <a class="occupation-card" routerLink="/skill-gap">
+                <div class="occupation-icon">{{ displayName(occupation.label).slice(0, 1).toUpperCase() }}</div>
+                <div class="occupation-info"><h3>{{ displayName(occupation.label) }}</h3><span>{{ displayName(occupation.id) }}</span></div>
+                <span class="card-arrow">↗</span>
+              </a>
+            }
+          </div>
+        } @else {
+          <p class="status">No occupation individuals are currently available.</p>
+        }
+      </div>
+    </section>
+
+    <section class="section why-section container">
+      <div class="section-heading centered reveal"><div><div class="kicker">WHY SKILLPATH</div><h2>Career clarity, with <em>structure.</em></h2></div></div>
+      <div class="why-grid">
+        <article class="why-card reveal"><span>01</span><i>⌁</i><h3>Semantic intelligence</h3><p>Go beyond keyword matching with meaningful relationships.</p></article>
+        <article class="why-card reveal"><span>02</span><i>◌</i><h3>Skill gap analysis</h3><p>Identify the skills separating a profile from a target occupation.</p></article>
+        <article class="why-card reveal"><span>03</span><i>∴</i><h3>Prerequisite reasoning</h3><p>Understand the logical order in which skills should be developed.</p></article>
+        <article class="why-card reveal"><span>04</span><i>◎</i><h3>Knowledge graph</h3><p>Explore relationships connecting skills, occupations and resources.</p></article>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="cta-grid"></div>
+      <div class="container cta-content reveal">
+        <div class="kicker">YOUR PATH IS ALREADY CONNECTED</div>
+        <h2>Your next career starts with understanding your <em>skills.</em></h2>
+        <p>Explore the SkillPath repository and discover where your path can lead.</p>
+        <div class="hero-actions">
+          <a class="button button-light" routerLink="/login">Open dashboard <span>↗</span></a>
+          <a class="button button-outline-light" routerLink="/knowledge-graph">Explore the graph <span>↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-top">
+      <div class="footer-brand">
+        <button class="brand brand-light" type="button" (click)="scrollTo('top')"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>skillpath</span></button>
+        <p>Semantic skill intelligence<br>for your next career.</p>
+      </div>
+      <div class="footer-links">
+        <div><strong>Product</strong><a routerLink="/login">Dashboard</a><a routerLink="/skill-gap">Skill gap</a><a routerLink="/learning-path">Learning path</a><a routerLink="/knowledge-graph">Knowledge graph</a></div>
+        <div><strong>Explore</strong><a routerLink="/" fragment="how-it-works">How it works</a><a routerLink="/" fragment="careers">Occupations</a><a routerLink="/dashboard/competences">Skills</a></div>
+        <div><strong>Technology</strong><a routerLink="/" fragment="knowledge-graph">OWL</a><a routerLink="/" fragment="knowledge-graph">RDF</a><a routerLink="/" fragment="knowledge-graph">SPARQL</a></div>
+      </div>
+    </div>
+    <div class="container footer-bottom"><span>© 2026 SkillPath</span><span>Semantic career intelligence</span><span>Built for the curious.</span></div>
+  </footer>
+</div>

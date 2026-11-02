@@ -1,0 +1,144 @@
+:host {
+  display: block;
+}
+
+.career-bridges-page {
+  display: grid;
+  gap: 20px;
+}
+
+.page-heading h1 {
+  margin: 6px 0 0;
+  color: var(--sp-ink-900);
+  font-size: clamp(26px, 3vw, 32px);
+  font-weight: 750;
+  letter-spacing: -1px;
+  line-height: 1.15;
+}
+
+.page-heading > p:last-child {
+  margin: 10px 0 0;
+  color: var(--sp-ink-500);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.bridge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 14px;
+}
+
+.bridge-card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius-md);
+  background: var(--sp-surface);
+  box-shadow: var(--sp-shadow-sm);
+}
+
+.bridge-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bridge-card-heading h2 {
+  margin: 0;
+  color: var(--sp-ink-900);
+  font-size: 16px;
+}
+
+.bridge-card-heading p {
+  margin: 4px 0 0;
+  color: var(--sp-ink-500);
+  font-size: 12px;
+}
+
+.bridge-percent {
+  color: var(--sp-indigo-600);
+  font-size: 20px;
+}
+
+.bridge-meter {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--sp-violet-100);
+}
+
+.bridge-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--sp-indigo-500), var(--sp-emerald-500));
+}
+
+.bridge-skill-line,
+.bridge-unavailable {
+  margin: 0;
+  color: var(--sp-ink-500);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.bridge-skill-line strong {
+  color: var(--sp-ink-700);
+}
+
+.bridge-trainings {
+  display: grid;
+  gap: 10px;
+}
+
+.bridge-trainings h3 {
+  margin: 0;
+  color: var(--sp-ink-800);
+  font-size: 12px;
+}
+
+.bridge-gap {
+  display: grid;
+  gap: 5px;
+}
+
+.bridge-gap > strong {
+  color: var(--sp-ink-700);
+  font-size: 12px;
+}
+
+.bridge-gap ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--sp-ink-600);
+  font-size: 12px;
+}
+
+.bridge-gap li {
+  padding-left: 2px;
+}
+
+.bridge-gap li small {
+  margin-left: 7px;
+  color: var(--sp-ink-400);
+}
+
+.bridge-modules {
+  margin-top: 5px !important;
+  color: var(--sp-ink-500) !important;
+}
+
+.bridge-unavailable {
+  font-size: 12px;
+}
+
+.bridge-action {
+  justify-self: start;
+  margin-top: 3px;
+}
